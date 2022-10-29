@@ -21,12 +21,11 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/txtViewMain"
         android:layout_width="336dp"
         android:layout_height="606dp"
         android:layout_marginStart="37dp"
         android:layout_marginTop="16dp"
-        android:text="TextView"
         app:layout_constraintEnd_toStartOf="@+id/btnAddNote"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

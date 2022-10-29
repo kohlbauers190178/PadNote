@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -54,6 +55,14 @@ public class MainFragment extends Fragment implements View.OnClickListener{
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        TextViewDataModel textViewDataModel = new ViewModelProvider(requireActivity()).get(TextViewDataModel.class);
+        textViewDataModel.text.observe(this, text -> {
+            TextView main = getActivity().findViewById(R.id.txtViewMain);
+            main.setText(text);
+        });
+
+        textViewDataModel.updateText(NewNoteFragment.loadNotes(getContext()));
     }
 
     MyViewModel viewModel;
@@ -65,6 +74,7 @@ public class MainFragment extends Fragment implements View.OnClickListener{
         viewModel = new ViewModelProvider(requireActivity()).get(MyViewModel.class);
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
+        view.findViewById(R.id.txtViewMain).setOnClickListener(this);
         view.findViewById(R.id.btnAddNote).setOnClickListener(this);
 
         return view;
@@ -74,6 +84,8 @@ public class MainFragment extends Fragment implements View.OnClickListener{
     public void onClick(View view) {
         if(view.getId()==R.id.btnAddNote){
             viewModel.showNewNote();
+        }else if(view.getId()==R.id.txtViewMain){
+            viewModel.showEditPopUp();
         }
     }
 }
