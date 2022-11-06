@@ -129,9 +129,9 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
 
             //new object from textinput-values
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("title", title);
-            jsonObject.put("description", description);
-            jsonObject.put("text", "");
+            jsonObject.put(JSONConstants.TITLE, title);
+            jsonObject.put(JSONConstants.DESCRIPTION, description);
+            jsonObject.put(JSONConstants.TEXT, "");
 
 
             /*FileInputStream inputStream = getContext().openFileInput("note.json");
@@ -205,9 +205,9 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
 
                 JSONObject object = jsonArray.getJSONObject(i);
 
-                temp.append(object.getString("title")).append("\n");
-                temp.append(object.getString("description")).append("\n");
-                temp.append(object.getString("text")).append("\n");
+                temp.append(object.getString(JSONConstants.TITLE)).append("\n");
+                temp.append(object.getString(JSONConstants.DESCRIPTION)).append("\n");
+                temp.append(object.getString(JSONConstants.TEXT)).append("\n");
                 temp.append("\n");
             }
         } catch (JSONException e) {

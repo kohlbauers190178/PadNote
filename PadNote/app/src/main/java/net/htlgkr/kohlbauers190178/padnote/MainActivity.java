@@ -8,6 +8,9 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Toast;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,13 +41,11 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
-
-
-
         getSupportFragmentManager().beginTransaction().addToBackStack("").replace(R.id.cntsrtntMain, new MainFragment()).commit();
 
     }
+
+    ArrayList<EditNotesPopUpFragment> popups = new ArrayList<>();
 
     private void showEditPopUp() {
 
@@ -54,8 +55,14 @@ public class MainActivity extends AppCompatActivity {
 
         builder.setView(editPopUp);
         builder.create().show();*/
-        EditNotesPopUpFragment editNotesPopUpFragment = new EditNotesPopUpFragment();
-        editNotesPopUpFragment.show(getSupportFragmentManager(), "Edit Popup");
+        for (EditNotesPopUpFragment editNotesPopUpFragment : popups) {
+            editNotesPopUpFragment.dismiss();
+        }
 
+        EditNotesPopUpFragment editNotesPopUpFragment = new EditNotesPopUpFragment();
+
+        popups.add(editNotesPopUpFragment);
+
+        editNotesPopUpFragment.show(getSupportFragmentManager(), "Edit Popup");
     }
 }

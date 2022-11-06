@@ -11,6 +11,8 @@ import java.nio.charset.StandardCharsets;
 
 public class JsonManager {
 
+    public static final String FILENAME = "note.json";
+
 
     /**
      * @param object the object which gets written to the file
@@ -19,7 +21,7 @@ public class JsonManager {
 
         FileOutputStream fileOutputStream = null;
         try {
-            fileOutputStream = context.openFileOutput("note.json", Context.MODE_PRIVATE);
+            fileOutputStream = context.openFileOutput(FILENAME, Context.MODE_PRIVATE);
             fileOutputStream.write(object.toString().getBytes(StandardCharsets.UTF_8));
             fileOutputStream.close();
         } catch (IOException e) {
@@ -33,7 +35,7 @@ public class JsonManager {
     public static String readFromJson(Context context) {
         FileInputStream inputStream = null;
         try {
-            inputStream = context.openFileInput("note.json");
+            inputStream = context.openFileInput(FILENAME);
             int size = inputStream.available();
 
             byte[] buffer = new byte[size];

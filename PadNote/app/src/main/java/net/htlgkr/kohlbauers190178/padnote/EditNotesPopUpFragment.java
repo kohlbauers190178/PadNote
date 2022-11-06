@@ -6,6 +6,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -80,7 +81,7 @@ public class EditNotesPopUpFragment extends DialogFragment implements View.OnCli
 
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject temp = jsonArray.getJSONObject(i);
-                NoteModel noteModel = new NoteModel(temp.getString("title"), temp.getString("description"), temp.getString("text"));
+                NoteModel noteModel = new NoteModel(temp.getString(JSONConstants.TITLE), temp.getString(JSONConstants.DESCRIPTION), temp.getString(JSONConstants.TEXT));
                 noteModels.add(noteModel);
             }
 
@@ -94,6 +95,9 @@ public class EditNotesPopUpFragment extends DialogFragment implements View.OnCli
 
     ConstraintLayout layout;
     RecyclerView recyclerView;
+    TextViewDataModel textViewDataModel;
+
+    MyViewModel viewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -104,9 +108,14 @@ public class EditNotesPopUpFragment extends DialogFragment implements View.OnCli
         layout = view.findViewById(R.id.cnstrntLayoutEditNotesPopUp);
         recyclerView = view.findViewById(R.id.rclrViewNotes);
 
+        textViewDataModel = new ViewModelProvider(requireActivity()).get(TextViewDataModel.class);
+        viewModel = new ViewModelProvider(requireActivity()).get(MyViewModel.class);
+
+
         loadNoteEditButtons();
 
-        MyAdapter adapter = new MyAdapter(getContext(), noteModels);
+        MyAdapter adapter = new MyAdapter(getContext(), noteModels, textViewDataModel, viewModel);
+
 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -117,6 +126,8 @@ public class EditNotesPopUpFragment extends DialogFragment implements View.OnCli
 
     @Override
     public void onClick(View view) {
+
+
 
     }
 }
