@@ -2,9 +2,23 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cnstrntMainFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainFragment">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rclrViewNotes"
+        android:layout_width="357dp"
+        android:layout_height="636dp"
+        android:layout_marginStart="27dp"
+        android:layout_marginTop="75dp"
+        android:layout_marginEnd="27dp"
+        android:layout_marginBottom="2dp"
+        app:layout_constraintBottom_toTopOf="@+id/btnAddNote"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnAddNote"
@@ -20,14 +34,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
-        android:id="@+id/txtViewMain"
-        android:layout_width="336dp"
-        android:layout_height="606dp"
-        android:layout_marginStart="37dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintEnd_toStartOf="@+id/btnAddNote"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,7 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
 
-    >
+    android:paddingStart="10dp"
+    android:paddingTop="10dp"
+    android:paddingEnd="10dp"
+    android:paddingRight="10dp"
+    android:paddingBottom="10dp">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
@@ -14,7 +18,7 @@
 
         android:layout_marginStart="5dp"
         android:layout_marginEnd="5dp"
-        app:cardBackgroundColor="@android:color/darker_gray"
+        app:cardBackgroundColor="@android:color/holo_red_light"
         app:cardCornerRadius="20dp"
         app:cardElevation="8dp"
         app:layout_constraintBottom_toBottomOf="parent"

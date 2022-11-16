@@ -9,7 +9,6 @@ import androidx.lifecycle.ViewModelProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -17,20 +16,9 @@ import com.google.android.material.textfield.TextInputEditText;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
-import java.sql.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -90,7 +78,8 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
 
         view.findViewById(R.id.btnNewNoteSave).setOnClickListener(this);
         viewModel = new ViewModelProvider(requireActivity()).get(MyViewModel.class);
-        textViewDataModel = new ViewModelProvider(requireActivity()).get(TextViewDataModel.class);
+        editTextDataModel = new ViewModelProvider(requireActivity()).get(EditTextDataModel.class);
+
         return view;
     }
 
@@ -108,7 +97,7 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
     }
 
 
-    TextViewDataModel textViewDataModel;
+    EditTextDataModel editTextDataModel;
 
     private boolean saveNote() {
         //saves the note
@@ -146,30 +135,38 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
 
             String json = JsonManager.readFromJson(getContext());
 
-            //gets the objectarray from the file
-            JSONObject temp = new JSONObject(json);
-            JSONArray arr = temp.getJSONArray("notes");
+            if (json == null) {
+                JSONObject topObject = new JSONObject();
+                JSONArray newArray = new JSONArray(Arrays.asList(jsonObject));
+                topObject.put("notes", newArray);
 
-            List<Object> jsonObjectList = new ArrayList<>();
+                JsonManager.writeToJson(getContext(), topObject);
+            } else {
+                //gets the objectarray from the file
+                JSONObject temp = new JSONObject(json);
+                JSONArray arr = temp.getJSONArray("notes");
 
-            //creates a list from all objects from the object[]
-            for (int i = 0; i < arr.length(); i++) {
-                jsonObjectList.add(arr.get(i));
-            }
-            jsonObjectList.add(jsonObject);
-            //adds the new object to the list and creates a new jsonarray
-            JSONArray jsonArray = new JSONArray(jsonObjectList);
+                List<Object> jsonObjectList = new ArrayList<>();
 
-            JSONObject main = new JSONObject();
-            main.put("notes", jsonArray);
+                //creates a list from all objects from the object[]
+                for (int i = 0; i < arr.length(); i++) {
+                    jsonObjectList.add(arr.get(i));
+                }
+                jsonObjectList.add(jsonObject);
+                //adds the new object to the list and creates a new jsonarray
+                JSONArray jsonArray = new JSONArray(jsonObjectList);
+
+                JSONObject main = new JSONObject();
+                main.put("notes", jsonArray);
 
             /*FileOutputStream fileOutputStream = getContext().openFileOutput("note.json", Context.MODE_PRIVATE);
             fileOutputStream.write(main.toString().getBytes(StandardCharsets.UTF_8));
             fileOutputStream.close();*/
-            JsonManager.writeToJson(getContext(), main);
+                JsonManager.writeToJson(getContext(), main);
+            }
+
 
             String notes = loadNotes(getContext());
-            updateNotes(notes);
             return true;
         } catch (Exception e) {
             Toast.makeText(getActivity(), "ERROR", Toast.LENGTH_SHORT).show();
@@ -177,9 +174,6 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
         return false;
     }
 
-    private void updateNotes(String notes) {
-        textViewDataModel.updateText(notes);
-    }
 
     public static String loadNotes(Context context) {
 
@@ -195,9 +189,13 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
             String json = new String(buffer, StandardCharsets.UTF_8);*/
 
 
-            String json = JsonManager.readFromJson(context);
+            String jsonFromFile = JsonManager.readFromJson(context);
 
-            JSONObject jsonObject = new JSONObject(json);
+            if (jsonFromFile == null) {
+                return null;
+            }
+
+            JSONObject jsonObject = new JSONObject(jsonFromFile);
             JSONArray jsonArray = jsonObject.getJSONArray("notes");
 
 

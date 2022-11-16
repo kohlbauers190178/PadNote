@@ -9,13 +9,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.lifecycle.ViewModelProvider;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,14 +23,16 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> impl
 
     Context context;
     List<NoteModel> noteModels;
-    TextViewDataModel textViewDataModel;
+    EditTextDataModel editTextDataModel;
     MyViewModel viewModel;
+    FragmentManager fragmentManager;
 
-    public MyAdapter(Context context, List<NoteModel> noteModels, TextViewDataModel textViewDataModel, MyViewModel viewModel) {
+    public MyAdapter(Context context, List<NoteModel> noteModels, EditTextDataModel editTextDataModel, MyViewModel viewModel, FragmentManager fragmentManager) {
         this.context = context;
         this.noteModels = noteModels;
-        this.textViewDataModel = textViewDataModel;
+        this.editTextDataModel = editTextDataModel;
         this.viewModel = viewModel;
+        this.fragmentManager=fragmentManager;
     }
 
 
@@ -57,6 +58,13 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> impl
     @Override
     public int getItemCount() {
         return noteModels.size();
+    }
+
+
+    private void showEditPopUp(String title, String description, String text) {
+
+        fragmentManager.beginTransaction().addToBackStack("").replace(R.id.cnstrntMainFragment, EditNotesFragment.newInstance(title,description, text)).commit();
+
     }
 
     @Override
@@ -87,6 +95,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> impl
             }
         }
 
+       showEditPopUp(title, description, text);
+
+        if(true){
+
+            return;
+        }
 
         String json = JsonManager.readFromJson(context);
 
@@ -129,7 +143,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> impl
             JsonManager.writeToJson(context, main);
 
             String notes = NewNoteFragment.loadNotes(context);
-            textViewDataModel.updateText(notes);
+            editTextDataModel.updateText(notes);
 
             viewModel.showEditPopUp();
 
