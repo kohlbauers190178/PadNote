@@ -2,23 +2,18 @@ package net.htlgkr.kohlbauers190178.padnote;
 
 import android.os.Bundle;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 
-import com.google.android.material.textfield.TextInputEditText;
+import com.google.gson.Gson;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -38,6 +33,8 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
     private String mParam1;
     private String mParam2;
     private String mParam3;
+
+
 
     public EditNotesFragment() {
         // Required empty public constructor
@@ -70,69 +67,37 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
             mParam2 = getArguments().getString(ARG_PARAM2);
             mParam3 = getArguments().getString(ARG_PARAM3);
         }
-
     }
 
-    ArrayList<NoteModel> noteModels = new ArrayList<>();
 
-    private void loadNoteEditButtons() {
-        try {
-            String loaded = JsonManager.readFromJson(getContext());
-            if (loaded == null) {
-                return;
-            }
-
-            JSONObject jsonObject = new JSONObject(loaded);
-            JSONArray jsonArray = jsonObject.getJSONArray("notes");
+    EditText editTextTitle;
+    EditText editTextDescription;
+    EditText editTextText;
 
 
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject temp = jsonArray.getJSONObject(i);
-                NoteModel noteModel = new NoteModel(temp.getString(JSONConstants.TITLE), temp.getString(JSONConstants.DESCRIPTION), temp.getString(JSONConstants.TEXT));
-                noteModels.add(noteModel);
-            }
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
-    }
-
-    TextInputEditText editTextTitle;
-    TextInputEditText editTextDescription;
-    TextInputEditText editTextText;
+    NoteDataViewModel noteDataViewModel;
+    FragmentStateViewModel fragmentStateViewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_edit_notes, container, false);
 
-        editTextTitle = view.findViewById(R.id.txtViewInEditNoteTitle);
-        editTextDescription = view.findViewById(R.id.txtViewInEditNoteDescription);
-        editTextText = view.findViewById(R.id.txtViewInEditNoteText);
+        editTextTitle = view.findViewById(R.id.editTextTitle);
+        editTextDescription = view.findViewById(R.id.editTextDescription);
+        editTextText = view.findViewById(R.id.editTextText);
 
-        /*
-        layout = view.findViewById(R.id.cnstrntLayoutEditNotesPopUp);
-        recyclerView = view.findViewById(R.id.rclrViewNotes);
+        noteDataViewModel = new ViewModelProvider(requireActivity()).get(NoteDataViewModel.class);
+        fragmentStateViewModel = new ViewModelProvider(requireActivity()).get(FragmentStateViewModel.class);
 
-        textViewDataModel = new ViewModelProvider(requireActivity()).get(TextViewDataModel.class);
-        viewModel = new ViewModelProvider(requireActivity()).get(MyViewModel.class);
+        view.findViewById(R.id.btnSaveEdit).setOnClickListener(this);
 
+        //Note noteModel = noteDataViewModel.selectedNote.getValue();
 
-        loadNoteEditButtons();
-
-        MyAdapter adapter = new MyAdapter(getContext(), noteModels, textViewDataModel, viewModel);
-
-
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));*/
-
-        editTextTitle.setText(mParam1);
-        editTextDescription.setText(mParam2);
-        editTextText.setText(mParam3);
+        Note noteModel = noteDataViewModel.allNotes.getValue().get(noteDataViewModel.selectedNoteNr);
+        editTextTitle.setText(noteModel.getTitle());
+        editTextDescription.setText(noteModel.getDescription());
+        editTextText.setText(noteModel.getText());
 
         return view;
     }
@@ -142,7 +107,24 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
     public void onClick(View view) {
 
         if (view.getId() == R.id.btnSaveEdit) {
+            ArrayList<Note> notes = noteDataViewModel.allNotes.getValue();
 
+            String title = ""+editTextTitle.getText().toString();
+            String description = ""+editTextDescription.getText().toString();
+            String text = ""+editTextText.getText().toString();
+
+            if(notes==null){
+                notes = new ArrayList<>();
+            }
+
+            notes.set(noteDataViewModel.selectedNoteNr, new Note(title, description, text));
+
+            Gson gson = new Gson();
+
+            JsonManager.writeToJson(getContext(), gson.toJson(notes));
+
+            noteDataViewModel.updateAllNotes(notes);
+            fragmentStateViewModel.showMain();
         }
 
     }

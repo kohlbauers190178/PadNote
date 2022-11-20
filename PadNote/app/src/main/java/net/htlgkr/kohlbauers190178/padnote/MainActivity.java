@@ -6,8 +6,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
 
-import java.util.ArrayList;
-
 public class MainActivity extends AppCompatActivity {
 
 
@@ -16,28 +14,27 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        MyViewModel viewModel = new ViewModelProvider(this).get(MyViewModel.class);
+        FragmentStateViewModel viewModel = new ViewModelProvider(this).get(FragmentStateViewModel.class);
         viewModel.state.observe(this, state -> {
             FragmentTransaction fragTransaction = getSupportFragmentManager().beginTransaction();
             switch (state) {
-                case MyViewModel.SHOW_NEW_NOTE:
-                    fragTransaction.addToBackStack("").replace(R.id.cntsrtntMain, NewNoteFragment.newInstance("", ""), "New Note");
+                case FragmentStateViewModel.SHOW_NEW_NOTE:
+                    fragTransaction.addToBackStack("").replace(R.id.cnstrntMain, NewNoteFragment.newInstance("", ""), "New Note");
+                    fragTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
                     break;
-                case MyViewModel.SHOW_SAVE_NOTE:
-                    fragTransaction.addToBackStack("").replace(R.id.cntsrtntMain, SaveNoteFragment.newInstance("", ""), "Save Note");
-                    break;
-                case MyViewModel.SHOW_EDIT_POPUP:
-                    //showEditPopUp();
+                case FragmentStateViewModel.SHOW_EDIT_POPUP:
+                    fragTransaction.addToBackStack("").replace(R.id.cnstrntMain, EditNotesFragment.newInstance("", "", ""), "Edit Note");
+                    fragTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
                     break;
                 default:
-                    fragTransaction.addToBackStack("").replace(R.id.cntsrtntMain, MainFragment.newInstance("", ""), "MainFragment");
+                    fragTransaction.replace(R.id.cnstrntMain, MainFragment.newInstance("", ""), "MainFragment");
                     break;
             }
             fragTransaction.commit();
         });
 
 
-        getSupportFragmentManager().beginTransaction().addToBackStack("").replace(R.id.cntsrtntMain, new MainFragment()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.cnstrntMain, new MainFragment()).commit();
 
     }
 

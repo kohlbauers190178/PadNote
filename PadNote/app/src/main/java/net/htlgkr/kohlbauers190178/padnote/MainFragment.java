@@ -2,7 +2,6 @@ package net.htlgkr.kohlbauers190178.padnote;
 
 import android.os.Bundle;
 
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -12,11 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -38,38 +37,35 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         // Required empty public constructor
     }
 
-    ArrayList<NoteModel> noteModels = new ArrayList<>();
+    ArrayList<Note> notes = new ArrayList<>();
 
-    private void loadNoteEditButtons() {
-        try {
-            String loaded = JsonManager.readFromJson(getContext());
-            if (loaded == null) {
-                return;
-            }
-
-            JSONObject jsonObject = new JSONObject(loaded);
-            JSONArray jsonArray = jsonObject.getJSONArray("notes");
+    private void loadNotes() {
+        String loaded = JsonManager.readFromJson(getContext());
 
 
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject temp = jsonArray.getJSONObject(i);
-                NoteModel noteModel = new NoteModel(temp.getString(JSONConstants.TITLE), temp.getString(JSONConstants.DESCRIPTION), temp.getString(JSONConstants.TEXT));
-                noteModels.add(noteModel);
-            }
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (loaded == null) {
+            return;
         }
 
+        TypeToken token = new TypeToken<Collection<Note>>(){};
+        Gson gson = new Gson();
+        notes = gson.fromJson(loaded,token.getType());
+            /*
+            JSONObject jsonObject = new JSONObject(loaded);
+            JSONArray jsonArray = jsonObject.getJSONArray("notes");
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject temp = jsonArray.getJSONObject(i);
+                Note noteModel = new Note(temp.getString(JSONConstants.TITLE), temp.getString(JSONConstants.DESCRIPTION), temp.getString(JSONConstants.TEXT));
+                notes.add(noteModel);
+            }*/
 
+        noteDataViewModel.updateAllNotes(notes);
     }
 
-    ConstraintLayout layout;
     RecyclerView recyclerView;
-    EditTextDataModel editTextDataModel;
+    NoteDataViewModel noteDataViewModel;
 
-    MyViewModel viewModel;
+    FragmentStateViewModel viewModel;
 
     /**
      * Use this factory method to create a new instance of
@@ -96,17 +92,6 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
-        /*textViewDataModel.text.observe(this, text -> {
-            TextView main = getActivity().findViewById(R.id.txtViewMain);
-            main.setText(text);
-        });*/
-
-        String loaded = NewNoteFragment.loadNotes(getContext());
-
-        if (loaded == null) {
-            loaded = "no notes available";
-        }
     }
 
     @Override
@@ -118,15 +103,20 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
         //view.findViewById(R.id.txtViewMain).setOnClickListener(this);
         view.findViewById(R.id.btnAddNote).setOnClickListener(this);
-        editTextDataModel = new ViewModelProvider(requireActivity()).get(EditTextDataModel.class);
-        viewModel = new ViewModelProvider(requireActivity()).get(MyViewModel.class);
+        noteDataViewModel = new ViewModelProvider(requireActivity()).get(NoteDataViewModel.class);
+        viewModel = new ViewModelProvider(requireActivity()).get(FragmentStateViewModel.class);
 
-        layout = view.findViewById(R.id.cnstrntLayoutEditNotesPopUp);
         recyclerView = view.findViewById(R.id.rclrViewNotes);
 
-        loadNoteEditButtons();
+        loadNotes();
 
-        MyAdapter adapter = new MyAdapter(getContext(), noteModels, editTextDataModel, viewModel, getActivity().getSupportFragmentManager());
+        if(notes==null){
+            notes = new ArrayList<>();
+        }
+
+        noteDataViewModel.updateAllNotes(notes);
+        MyAdapter adapter = new MyAdapter(notes, noteDataViewModel, viewModel, getActivity().getSupportFragmentManager());
+
 
 
         recyclerView.setAdapter(adapter);
@@ -138,8 +128,6 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         if (view.getId() == R.id.btnAddNote) {
             viewModel.showNewNote();
-        } else if (view instanceof ConstraintLayout) {
-
         }
     }
 }

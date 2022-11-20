@@ -15,14 +15,14 @@ public class JsonManager {
 
 
     /**
-     * @param object the object which gets written to the file
+     * @param string the object which gets written to the file
      */
-    public static void writeToJson(Context context, JSONObject object) {
+    public static void writeToJson(Context context, String string) {
 
         FileOutputStream fileOutputStream = null;
         try {
             fileOutputStream = context.openFileOutput(FILENAME, Context.MODE_PRIVATE);
-            fileOutputStream.write(object.toString().getBytes(StandardCharsets.UTF_8));
+            fileOutputStream.write(string.getBytes(StandardCharsets.UTF_8));
             fileOutputStream.close();
         } catch (IOException e) {
             e.printStackTrace();

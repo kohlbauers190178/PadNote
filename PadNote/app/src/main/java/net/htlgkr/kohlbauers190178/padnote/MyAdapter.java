@@ -1,10 +1,10 @@
 package net.htlgkr.kohlbauers190178.padnote;
 
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -12,34 +12,28 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> implements View.OnClickListener {
 
-    Context context;
-    List<NoteModel> noteModels;
-    EditTextDataModel editTextDataModel;
-    MyViewModel viewModel;
-    FragmentManager fragmentManager;
 
-    public MyAdapter(Context context, List<NoteModel> noteModels, EditTextDataModel editTextDataModel, MyViewModel viewModel, FragmentManager fragmentManager) {
-        this.context = context;
-        this.noteModels = noteModels;
-        this.editTextDataModel = editTextDataModel;
+    List<Note> notes;
+    NoteDataViewModel noteDataViewModel;
+    FragmentStateViewModel viewModel;
+
+
+    public MyAdapter(List<Note> notes, NoteDataViewModel noteDataViewModel, FragmentStateViewModel viewModel, FragmentManager fragmentManager) {
+        this.notes = notes;
+        this.noteDataViewModel = noteDataViewModel;
         this.viewModel = viewModel;
-        this.fragmentManager=fragmentManager;
     }
 
 
     @NonNull
     @Override
     public MyAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        LayoutInflater inflater = LayoutInflater.from(context);
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.recycler_view_row, parent, false);
 
         view.findViewById(R.id.cardView).setOnClickListener(this);
@@ -50,29 +44,30 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> impl
 
     @Override
     public void onBindViewHolder(@NonNull MyAdapter.MyViewHolder holder, int position) {
-        holder.txtViewTitle.setText(noteModels.get(position).getTitle());
-        holder.txtViewDescription.setText(noteModels.get(position).getDescription());
-        holder.txtViewText.setText(noteModels.get(position).getText());
+        holder.txtViewTitle.setText(notes.get(position).getTitle());
+        holder.txtViewDescription.setText(notes.get(position).getDescription());
+        holder.txtViewText.setText(notes.get(position).getText());
+
+        for (int i = 0; i < holder.parentLayout.getChildCount(); i++) {
+            if (holder.parentLayout.getChildAt(i) instanceof CardView) {
+                holder.parentLayout.getChildAt(i).setOnClickListener(holder.listener);
+            }
+
+        }
+
     }
 
     @Override
     public int getItemCount() {
-        return noteModels.size();
+        return notes.size();
     }
 
-
-    private void showEditPopUp(String title, String description, String text) {
-
-        fragmentManager.beginTransaction().addToBackStack("").replace(R.id.cnstrntMainFragment, EditNotesFragment.newInstance(title,description, text)).commit();
-
-    }
 
     @Override
     public void onClick(View view) {
 
+/*
         CardView cardView = (CardView) view;
-
-
 
         ConstraintLayout constraintLayout = (ConstraintLayout) cardView.getChildAt(0);
 
@@ -82,95 +77,48 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> impl
 
         for (int i = 0; i < constraintLayout.getChildCount(); i++) {
             TextView textView = (TextView) constraintLayout.getChildAt(i);
-            switch (textView.getId()) {
-                case R.id.txtViewTitle:
-                    title = textView.getText().toString();
-                    break;
-                case R.id.txtViewDescription:
-                    description = textView.getText().toString();
-                    break;
-                case R.id.txtViewText:
-                    text = textView.getText().toString();
-                    break;
+            int id = textView.getId();
+            if (id == R.id.txtViewTitle) {
+                title = textView.getText().toString();
+            } else if (id == R.id.txtViewDescription) {
+                description = textView.getText().toString();
+            } else if (id == R.id.txtViewText) {
+                text = textView.getText().toString();
             }
         }
 
-       showEditPopUp(title, description, text);
 
-        if(true){
-
-            return;
-        }
-
-        String json = JsonManager.readFromJson(context);
-
-        //gets the objectarray from the file
-        JSONObject temp = null;
-        try {
-            temp = new JSONObject(json);
-            JSONArray arr = temp.getJSONArray("notes");
-            List<JSONObject> jsonObjectList = new ArrayList<>();
-
-            //creates a list from all objects from the object[]
-            for (int i = 0; i < arr.length(); i++) {
-                jsonObjectList.add(arr.getJSONObject(i));
-            }
-
-
-            //TODO: add edit note
-            for (int i = 0; i < jsonObjectList.size(); i++) {
-                JSONObject object = jsonObjectList.get(i);
-                if (object.getString(JSONConstants.TITLE).equals(title)) {
-                    JSONObject newJSONObject = new JSONObject();
-                    newJSONObject.put(JSONConstants.TITLE, "changed title");
-                    newJSONObject.put(JSONConstants.DESCRIPTION, description);
-                    newJSONObject.put(JSONConstants.TEXT, text);
-
-                    jsonObjectList.set(i, newJSONObject);
-                    break;
-                }
-            }
-
-            JSONArray jsonArray = new JSONArray(jsonObjectList);
-
-
-            JSONObject main = new JSONObject();
-            main.put("notes", jsonArray);
-
-            /*FileOutputStream fileOutputStream = getContext().openFileOutput("note.json", Context.MODE_PRIVATE);
-            fileOutputStream.write(main.toString().getBytes(StandardCharsets.UTF_8));
-            fileOutputStream.close();*/
-            JsonManager.writeToJson(context, main);
-
-            String notes = NewNoteFragment.loadNotes(context);
-            editTextDataModel.updateText(notes);
-
-            viewModel.showEditPopUp();
-
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-
+        //noteDataViewModel.updateSelectedNote(new Note(title, description, text));
+        //viewModel.showEdit();*/
     }
 
-    public static class MyViewHolder extends RecyclerView.ViewHolder {
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
         TextView txtViewTitle;
         TextView txtViewDescription;
         TextView txtViewText;
+        ConstraintLayout parentLayout;
+
+        View.OnClickListener listener;
 
 
-        public MyViewHolder(@NonNull View itemView) {
+
+        public MyViewHolder(View itemView) {
             super(itemView);
-
             txtViewTitle = itemView.findViewById(R.id.txtViewTitle);
             txtViewDescription = itemView.findViewById(R.id.txtViewDescription);
             txtViewText = itemView.findViewById(R.id.txtViewText);
+            parentLayout = itemView.findViewById(R.id.parentLayout);
+
+            listener = this;
+        }
+
+        @Override
+        public void onClick(View view) {
+
+            noteDataViewModel.updateSelectedNoteNr(getLayoutPosition());
+            viewModel.showEdit();
         }
     }
-
 
 }

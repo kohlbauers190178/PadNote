@@ -1,6 +1,6 @@
 package net.htlgkr.kohlbauers190178.padnote;
 
-public class NoteModel {
+public class Note {
     String title;
     String description;
     String text;
@@ -17,7 +17,7 @@ public class NoteModel {
         return text;
     }
 
-    public NoteModel(String title, String description, String text) {
+    public Note(String title, String description, String text) {
         this.title = title;
         this.description = description;
         this.text = text;
