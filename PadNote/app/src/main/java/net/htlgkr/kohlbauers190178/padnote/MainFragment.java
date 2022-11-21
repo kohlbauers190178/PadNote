@@ -47,7 +47,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             return;
         }
 
-        TypeToken token = new TypeToken<Collection<Note>>(){};
+        TypeToken<Collection<Note>> token = new TypeToken<Collection<Note>>(){};
         Gson gson = new Gson();
         notes = gson.fromJson(loaded,token.getType());
             /*

@@ -10,10 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.timepicker.MaterialTimePicker;
+import com.google.android.material.timepicker.TimeFormat;
 import com.google.gson.Gson;
-
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -73,6 +74,8 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.fragment_new_note, container, false);
 
         view.findViewById(R.id.btnNewNoteSave).setOnClickListener(this);
+        view.findViewById(R.id.btnAddDate).setOnClickListener(this);
+        view.findViewById(R.id.btnAddTime).setOnClickListener(this);
         viewModel = new ViewModelProvider(requireActivity()).get(FragmentStateViewModel.class);
         noteDataViewModel = new ViewModelProvider(requireActivity()).get(NoteDataViewModel.class);
 
@@ -85,11 +88,31 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
         if (view.getId() == R.id.btnNewNoteSave) {
             if (saveNote()) {
                 viewModel.showMain();
-            } else {
-                //maybe for future
             }
+        } else if (view.getId() == R.id.btnAddDate) {
+            long date = pickDate();
+        } else if (view.getId() == R.id.btnAddTime) {
+            MyTime time = pickTime();
         }
 
+    }
+
+    //TODO: implement getting date and time
+    private long pickDate() {
+        MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker().setTitleText("Select date (Optional)").build();
+        datePicker.show(requireActivity().getSupportFragmentManager(), "");
+        if (datePicker.getSelection() == null) {
+            return 0;
+        }
+        return datePicker.getSelection();
+    }
+
+    private MyTime pickTime() {
+        MaterialTimePicker timePicker = new MaterialTimePicker.Builder().setTimeFormat(TimeFormat.CLOCK_12H).setHour(12).setMinute(10).setTitleText("Select Time").build();
+        timePicker.show(requireActivity().getSupportFragmentManager(), "");
+
+        return null;
+      //  return new MyTime(timePicker.getHour(), timePicker.getMinute());
     }
 
 
@@ -113,10 +136,10 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
             }
 
             //new object from textinput-values
-            JSONObject jsonObject = new JSONObject();
+            /*JSONObject jsonObject = new JSONObject();
             jsonObject.put(JSONConstants.TITLE, title);
             jsonObject.put(JSONConstants.DESCRIPTION, description);
-            jsonObject.put(JSONConstants.TEXT, "");
+            jsonObject.put(JSONConstants.TEXT, "");*/
 
 
             ArrayList<Note> allNotes = noteDataViewModel.allNotes.getValue();
