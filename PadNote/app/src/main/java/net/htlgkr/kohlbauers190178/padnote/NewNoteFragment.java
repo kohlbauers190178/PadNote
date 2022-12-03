@@ -17,6 +17,7 @@ import com.google.android.material.timepicker.TimeFormat;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -90,30 +91,39 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
                 viewModel.showMain();
             }
         } else if (view.getId() == R.id.btnAddDate) {
-            long date = pickDate();
+            showDatePicker();
         } else if (view.getId() == R.id.btnAddTime) {
-            MyTime time = pickTime();
+            showTimePicker();
+
         }
 
     }
 
-    //TODO: implement getting date and time
-    private long pickDate() {
+    private void showDatePicker() {
         MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker().setTitleText("Select date (Optional)").build();
+        datePicker.addOnPositiveButtonClickListener(this::setPickedDate);
         datePicker.show(requireActivity().getSupportFragmentManager(), "");
-        if (datePicker.getSelection() == null) {
-            return 0;
-        }
-        return datePicker.getSelection();
     }
 
-    private MyTime pickTime() {
+    private long date = 0;
+
+    private void setPickedDate(Long date) {
+        this.date = date;
+    }
+
+    private void showTimePicker() {
         MaterialTimePicker timePicker = new MaterialTimePicker.Builder().setTimeFormat(TimeFormat.CLOCK_12H).setHour(12).setMinute(10).setTitleText("Select Time").build();
-        timePicker.show(requireActivity().getSupportFragmentManager(), "");
+        timePicker.addOnPositiveButtonClickListener(s ->
+                setMyTime(timePicker.getHour(), timePicker.getMinute()));
 
-        return null;
-      //  return new MyTime(timePicker.getHour(), timePicker.getMinute());
+        timePicker.show(requireActivity().getSupportFragmentManager(), "");
     }
+
+    private void setMyTime(int hours, int minutes) {
+        myTime = new MyTime(hours, minutes);
+    }
+
+    private MyTime myTime;
 
 
     NoteDataViewModel noteDataViewModel;
@@ -144,12 +154,19 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
 
             ArrayList<Note> allNotes = noteDataViewModel.allNotes.getValue();
 
-            if (allNotes != null) {
-                allNotes.add(new Note(title, description, ""));
-            } else {
+            if (allNotes == null) {
                 allNotes = new ArrayList<>();
-                allNotes.add(new Note(title, description, ""));
             }
+
+            Note noteToAdd = new Note(title, description, "");
+
+            if (date != 0 && myTime != null) {
+                noteToAdd.setDate(date);
+                noteToAdd.setMyTime(myTime);
+            }
+
+            allNotes.add(noteToAdd);
+
 
             Gson gson = new Gson();
 
