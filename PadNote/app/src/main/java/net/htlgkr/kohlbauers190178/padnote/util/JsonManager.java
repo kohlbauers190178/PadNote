@@ -1,4 +1,4 @@
-package net.htlgkr.kohlbauers190178.padnote;
+package net.htlgkr.kohlbauers190178.padnote.util;
 
 import android.content.Context;
 

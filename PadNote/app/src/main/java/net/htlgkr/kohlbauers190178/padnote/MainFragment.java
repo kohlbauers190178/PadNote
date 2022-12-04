@@ -14,6 +14,9 @@ import android.view.ViewGroup;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import net.htlgkr.kohlbauers190178.padnote.model.Note;
+import net.htlgkr.kohlbauers190178.padnote.util.JsonManager;
+
 import java.util.ArrayList;
 import java.util.Collection;
 

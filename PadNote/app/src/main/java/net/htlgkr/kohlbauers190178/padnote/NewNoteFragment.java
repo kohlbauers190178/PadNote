@@ -10,14 +10,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.timepicker.MaterialTimePicker;
 import com.google.android.material.timepicker.TimeFormat;
 import com.google.gson.Gson;
 
+import net.htlgkr.kohlbauers190178.padnote.model.Note;
+import net.htlgkr.kohlbauers190178.padnote.util.JsonManager;
+import net.htlgkr.kohlbauers190178.padnote.util.MyDatePicker;
+import net.htlgkr.kohlbauers190178.padnote.util.MyTime;
+import net.htlgkr.kohlbauers190178.padnote.util.MyTimePicker;
+
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -99,32 +103,17 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
 
     }
 
+    MyDatePicker myDatePicker = new MyDatePicker();
+    MyTimePicker myTimePicker = new MyTimePicker();
+
     private void showDatePicker() {
-        MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker().setTitleText("Select date (Optional)").build();
-        datePicker.addOnPositiveButtonClickListener(this::setPickedDate);
-        datePicker.show(requireActivity().getSupportFragmentManager(), "");
+        myDatePicker.showDatePicker(requireActivity().getSupportFragmentManager());
     }
 
-    private long date = 0;
-
-    private void setPickedDate(Long date) {
-        this.date = date;
-    }
 
     private void showTimePicker() {
-        MaterialTimePicker timePicker = new MaterialTimePicker.Builder().setTimeFormat(TimeFormat.CLOCK_12H).setHour(12).setMinute(10).setTitleText("Select Time").build();
-        timePicker.addOnPositiveButtonClickListener(s ->
-                setMyTime(timePicker.getHour(), timePicker.getMinute()));
-
-        timePicker.show(requireActivity().getSupportFragmentManager(), "");
+        myTimePicker.showMyTimePicker(requireActivity().getSupportFragmentManager());
     }
-
-    private void setMyTime(int hours, int minutes) {
-        myTime = new MyTime(hours, minutes);
-    }
-
-    private MyTime myTime;
-
 
     NoteDataViewModel noteDataViewModel;
 
@@ -160,23 +149,16 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
 
             Note noteToAdd = new Note(title, description, "");
 
-            if (date != 0 && myTime != null) {
-                noteToAdd.setDate(date);
-                noteToAdd.setMyTime(myTime);
+            if (myDatePicker.getDate() != 0 && myTimePicker.getMyTime() != null) {
+                noteToAdd.setDate(myDatePicker.getDate());
+                noteToAdd.setMyTime(myTimePicker.getMyTime());
             }
 
             allNotes.add(noteToAdd);
 
-
             Gson gson = new Gson();
-
             String jsonstring = gson.toJson(allNotes);
-
-            int i = 0;
-
             JsonManager.writeToJson(getContext(), jsonstring);
-
-
 
             /*String json = JsonManager.readFromJson(getContext());
 
@@ -206,8 +188,6 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
 
                 JsonManager.writeToJson(getContext(), main);
             }*/
-
-
             return true;
         } catch (Exception e) {
             Toast.makeText(getActivity(), "ERROR", Toast.LENGTH_SHORT).show();

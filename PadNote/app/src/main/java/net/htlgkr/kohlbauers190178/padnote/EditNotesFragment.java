@@ -10,11 +10,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TextView;
 
+import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.gson.Gson;
 
-import java.lang.reflect.Array;
+import net.htlgkr.kohlbauers190178.padnote.model.Note;
+import net.htlgkr.kohlbauers190178.padnote.util.JsonManager;
+import net.htlgkr.kohlbauers190178.padnote.util.MyDatePicker;
+import net.htlgkr.kohlbauers190178.padnote.util.MyTime;
+import net.htlgkr.kohlbauers190178.padnote.util.MyTimePicker;
+
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,7 +42,6 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
     private String mParam1;
     private String mParam2;
     private String mParam3;
-
 
 
     public EditNotesFragment() {
@@ -74,6 +82,9 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
     EditText editTextDescription;
     EditText editTextText;
 
+    TextView txtViewDate;
+    TextView txtViewTime;
+
 
     NoteDataViewModel noteDataViewModel;
     FragmentStateViewModel fragmentStateViewModel;
@@ -87,6 +98,12 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
         editTextDescription = view.findViewById(R.id.editTextDescription);
         editTextText = view.findViewById(R.id.editTextText);
 
+        txtViewDate = view.findViewById(R.id.txtViewInEditNoteDate);
+        txtViewTime = view.findViewById(R.id.txtViewInEditNoteTime);
+
+        txtViewDate.setOnClickListener(this);
+        txtViewTime.setOnClickListener(this);
+
         noteDataViewModel = new ViewModelProvider(requireActivity()).get(NoteDataViewModel.class);
         fragmentStateViewModel = new ViewModelProvider(requireActivity()).get(FragmentStateViewModel.class);
 
@@ -99,25 +116,52 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
         editTextDescription.setText(noteModel.getDescription());
         editTextText.setText(noteModel.getText());
 
+        if (noteModel.getDate() != 0 && noteModel.getMyTime() != null) {
+            txtViewDate.setText(new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(noteModel.getDate()));
+
+            String time = noteModel.getMyTime().getHours() + ":" + String.format(Locale.getDefault(), "%02d", noteModel.getMyTime().getMinutes());
+            txtViewTime.setText(time);
+        }
+
+
         return view;
     }
+
+
+    MyDatePicker myDatePicker;
+    MyTimePicker myTimePicker;
 
 
     @Override
     public void onClick(View view) {
 
+        Note curentNote = noteDataViewModel.allNotes.getValue().get(noteDataViewModel.selectedNoteNr);
+
         if (view.getId() == R.id.btnSaveEdit) {
             ArrayList<Note> notes = noteDataViewModel.allNotes.getValue();
 
-            String title = ""+editTextTitle.getText().toString();
-            String description = ""+editTextDescription.getText().toString();
-            String text = ""+editTextText.getText().toString();
+            String title = "" + editTextTitle.getText().toString();
+            String description = "" + editTextDescription.getText().toString();
+            String text = "" + editTextText.getText().toString();
 
-            if(notes==null){
+            if (notes == null) {
                 notes = new ArrayList<>();
             }
 
-            notes.set(noteDataViewModel.selectedNoteNr, new Note(title, description, text));
+            Note note = noteDataViewModel.allNotes.getValue().get(noteDataViewModel.selectedNoteNr);
+
+            Note tempnote = new Note(title, description, text);
+
+            if (note.getDate() != 0 && note.getMyTime() != null) {
+
+
+                tempnote.setDate(note.getDate());
+                tempnote.setMyTime(note.getMyTime());
+                notes.set(noteDataViewModel.selectedNoteNr, tempnote);
+            } else {
+                notes.set(noteDataViewModel.selectedNoteNr, tempnote);
+            }
+
 
             Gson gson = new Gson();
 
@@ -125,6 +169,26 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
 
             noteDataViewModel.updateAllNotes(notes);
             fragmentStateViewModel.showMain();
+        } else if (view.getId() == R.id.txtViewInEditNoteDate) {
+            myDatePicker = new MyDatePicker();
+            myDatePicker.setDatePickerListener(selection -> {
+                curentNote.setDate(selection);
+                txtViewDate.setText(new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(selection));
+            });
+            myDatePicker.showDatePicker(requireActivity().getSupportFragmentManager());
+        } else if (view.getId() == R.id.txtViewInEditNoteTime) {
+            if (curentNote.getDate() != 0 && curentNote.getMyTime() != null) {
+                myTimePicker = new MyTimePicker(curentNote.getMyTime().getHours(), curentNote.getMyTime().getMinutes());
+            } else {
+                myTimePicker = new MyTimePicker();
+            }
+            myTimePicker.setTimePickerListener(v -> {
+                curentNote.setMyTime(new MyTime(myTimePicker.getTimePicker().getHour(), myTimePicker.getTimePicker().getMinute()));
+
+                String time = myTimePicker.getTimePicker().getHour() + ":" + String.format(Locale.getDefault(), "%02d", myTimePicker.getTimePicker().getMinute());
+                txtViewTime.setText(time);
+            });
+            myTimePicker.showMyTimePicker(requireActivity().getSupportFragmentManager());
         }
 
     }

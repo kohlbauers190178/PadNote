@@ -4,7 +4,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
@@ -12,8 +11,12 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import net.htlgkr.kohlbauers190178.padnote.model.Note;
+import net.htlgkr.kohlbauers190178.padnote.util.MyTime;
+
+import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.Locale;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> implements View.OnClickListener {
 
@@ -47,6 +50,17 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> impl
         holder.txtViewTitle.setText(notes.get(position).getTitle());
         holder.txtViewDescription.setText(notes.get(position).getDescription());
         holder.txtViewText.setText(notes.get(position).getText());
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
+
+        long date = notes.get(position).getDate();
+        MyTime myTime = notes.get(position).getMyTime();
+        if (date != 0 && myTime != null) {
+            holder.txtViewDate.setText(dateFormat.format(date));
+
+            String time = myTime.getHours() + ":" + String.format(Locale.getDefault(), "%02d", myTime.getMinutes());
+            holder.txtViewTime.setText(time);
+        }
 
         for (int i = 0; i < holder.parentLayout.getChildCount(); i++) {
             if (holder.parentLayout.getChildAt(i) instanceof CardView) {
@@ -97,10 +111,12 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> impl
         TextView txtViewTitle;
         TextView txtViewDescription;
         TextView txtViewText;
+        TextView txtViewDate;
+        TextView txtViewTime;
+
         ConstraintLayout parentLayout;
 
         View.OnClickListener listener;
-
 
 
         public MyViewHolder(View itemView) {
@@ -108,6 +124,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> impl
             txtViewTitle = itemView.findViewById(R.id.txtViewTitle);
             txtViewDescription = itemView.findViewById(R.id.txtViewDescription);
             txtViewText = itemView.findViewById(R.id.txtViewText);
+
+            txtViewDate = itemView.findViewById(R.id.txtViewDate);
+            txtViewTime = itemView.findViewById(R.id.txtViewTime);
+
             parentLayout = itemView.findViewById(R.id.parentLayout);
 
             listener = this;

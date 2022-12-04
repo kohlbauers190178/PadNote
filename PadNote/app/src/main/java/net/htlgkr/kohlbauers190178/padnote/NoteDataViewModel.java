@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import net.htlgkr.kohlbauers190178.padnote.model.Note;
+
 import java.util.ArrayList;
 
 public class NoteDataViewModel extends ViewModel {

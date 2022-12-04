@@ -28,7 +28,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="407dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginStart="1dp"
             android:layout_marginLeft="1dp"
@@ -45,6 +45,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="7dp"
+                android:layout_marginEnd="16dp"
                 android:text="TextView"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toTopOf="@+id/txtViewDescription"
@@ -58,7 +59,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="12dp"
-                android:layout_marginBottom="13dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="10dp"
                 android:text="TextView"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toTopOf="@+id/txtViewText"
@@ -69,17 +71,43 @@
 
             <TextView
                 android:id="@+id/txtViewText"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginEnd="328dp"
-                android:layout_marginBottom="16dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="10dp"
                 android:text="TextView"
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/txtViewDate"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txtViewDescription" />
+
+            <TextView
+                android:id="@+id/txtViewDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="1dp"
+                app:layout_constraintBottom_toTopOf="@+id/txtViewTime"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtViewText" />
+
+            <TextView
+                android:id="@+id/txtViewTime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtViewDate" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 

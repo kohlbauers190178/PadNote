@@ -1,4 +1,6 @@
-package net.htlgkr.kohlbauers190178.padnote;
+package net.htlgkr.kohlbauers190178.padnote.model;
+
+import net.htlgkr.kohlbauers190178.padnote.util.MyTime;
 
 public class Note {
     String title;
