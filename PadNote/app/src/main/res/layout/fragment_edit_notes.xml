@@ -5,7 +5,7 @@
     android:id="@+id/cnstrntLayoutEditNotesPopUp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".EditNotesFragment">
+    tools:context=".fragment.EditNotesFragment">
 
 
     <TextView

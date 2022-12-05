@@ -7,6 +7,12 @@ import androidx.lifecycle.ViewModelProvider;
 import android.os.Bundle;
 import android.view.WindowManager;
 
+import net.htlgkr.kohlbauers190178.padnote.fragment.EditNotesFragment;
+import net.htlgkr.kohlbauers190178.padnote.fragment.MainFragment;
+import net.htlgkr.kohlbauers190178.padnote.fragment.NewNoteFragment;
+import net.htlgkr.kohlbauers190178.padnote.fragment.SettingsFragment;
+import net.htlgkr.kohlbauers190178.padnote.viewmodel.FragmentStateViewModel;
+
 public class MainActivity extends AppCompatActivity {
 
 
@@ -27,6 +33,10 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case FragmentStateViewModel.SHOW_EDIT_POPUP:
                     fragTransaction.addToBackStack("").replace(R.id.cnstrntMain, EditNotesFragment.newInstance("", "", ""), "Edit Note");
+                    fragTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+                    break;
+                case FragmentStateViewModel.SHOW_SETTINGS:
+                    fragTransaction.addToBackStack("").replace(R.id.cnstrntMain, SettingsFragment.newInstance("", ""), "Settings");
                     fragTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
                     break;
                 default:

@@ -1,4 +1,4 @@
-package net.htlgkr.kohlbauers190178.padnote;
+package net.htlgkr.kohlbauers190178.padnote.fragment;
 
 import android.os.Bundle;
 
@@ -12,14 +12,16 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.gson.Gson;
 
+import net.htlgkr.kohlbauers190178.padnote.R;
 import net.htlgkr.kohlbauers190178.padnote.model.Note;
 import net.htlgkr.kohlbauers190178.padnote.util.JsonManager;
 import net.htlgkr.kohlbauers190178.padnote.util.MyDatePicker;
 import net.htlgkr.kohlbauers190178.padnote.util.MyTime;
 import net.htlgkr.kohlbauers190178.padnote.util.MyTimePicker;
+import net.htlgkr.kohlbauers190178.padnote.viewmodel.FragmentStateViewModel;
+import net.htlgkr.kohlbauers190178.padnote.viewmodel.NoteDataViewModel;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;

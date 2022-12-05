@@ -1,4 +1,4 @@
-package net.htlgkr.kohlbauers190178.padnote;
+package net.htlgkr.kohlbauers190178.padnote.fragment;
 
 import android.os.Bundle;
 
@@ -14,8 +14,12 @@ import android.view.ViewGroup;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import net.htlgkr.kohlbauers190178.padnote.MyAdapter;
+import net.htlgkr.kohlbauers190178.padnote.R;
 import net.htlgkr.kohlbauers190178.padnote.model.Note;
 import net.htlgkr.kohlbauers190178.padnote.util.JsonManager;
+import net.htlgkr.kohlbauers190178.padnote.viewmodel.FragmentStateViewModel;
+import net.htlgkr.kohlbauers190178.padnote.viewmodel.NoteDataViewModel;
 
 import java.util.ArrayList;
 import java.util.Collection;

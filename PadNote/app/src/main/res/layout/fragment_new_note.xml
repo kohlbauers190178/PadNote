@@ -5,7 +5,7 @@
     android:id="@+id/cnstrntNewNote"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".NewNoteFragment">
+    tools:context=".fragment.NewNoteFragment">
 
     <TextView
         android:id="@+id/txtVwDescription"

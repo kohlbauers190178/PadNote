@@ -13,6 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import net.htlgkr.kohlbauers190178.padnote.model.Note;
 import net.htlgkr.kohlbauers190178.padnote.util.MyTime;
+import net.htlgkr.kohlbauers190178.padnote.viewmodel.FragmentStateViewModel;
+import net.htlgkr.kohlbauers190178.padnote.viewmodel.NoteDataViewModel;
 
 import java.text.SimpleDateFormat;
 import java.util.List;

@@ -19,8 +19,6 @@ public class MyTimePicker {
     }
 
     public void showMyTimePicker(FragmentManager fragmentManager) {
-
-
         timePicker.show(fragmentManager, "");
     }
 
@@ -33,7 +31,7 @@ public class MyTimePicker {
         timePicker = new MaterialTimePicker.Builder().setTimeFormat(TimeFormat.CLOCK_12H).setHour(hours).setMinute(minutes).setTitleText("Select Time").build();
     }
 
-    public void setTimePickerListener(View.OnClickListener listener){
+    public void setTimePickerListener(View.OnClickListener listener) {
         timePicker.clearOnCancelListeners();
         timePicker.addOnPositiveButtonClickListener(listener);
     }
