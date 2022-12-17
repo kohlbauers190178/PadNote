@@ -3,14 +3,20 @@ package net.htlgkr.kohlbauers190178.padnote.fragment;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import net.htlgkr.kohlbauers190178.padnote.R;
+import net.htlgkr.kohlbauers190178.padnote.viewmodel.FragmentStateViewModel;
+import net.htlgkr.kohlbauers190178.padnote.viewmodel.SettingsViewModel;
+
+import java.time.format.DateTimeFormatter;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -50,8 +56,11 @@ public class SettingsFragment extends Fragment {
         return fragment;
     }
 
+    private FloatingActionButton btnSettingsDone;
+
     private SwitchMaterial swtch24hourFormat;
     private SwitchMaterial swtchUSDateFormat;
+    private SwitchMaterial swtchShowExpiredNotes;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -62,13 +71,79 @@ public class SettingsFragment extends Fragment {
         }
     }
 
+    SettingsViewModel settingsViewModel;
+    FragmentStateViewModel fragmentStateViewModel;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_settings, container, false);
+
+        btnSettingsDone = view.findViewById(R.id.btnSettingsDone);
         swtch24hourFormat = view.findViewById(R.id.swtch24hourFormat);
         swtchUSDateFormat = view.findViewById(R.id.swtchUSDateFormat);
+        swtchShowExpiredNotes = view.findViewById(R.id.swtchShowExpiredNotes);
+
+        settingsViewModel = new ViewModelProvider(requireActivity()).get(SettingsViewModel.class);
+        fragmentStateViewModel = new ViewModelProvider(requireActivity()).get(FragmentStateViewModel.class);
+
+        settingsViewModel.loadSettings(getContext());
+
+
+        swtch24hourFormat.setChecked(settingsViewModel.TWNTYFOURHOURFORMAT);
+
+        swtchUSDateFormat.setChecked(settingsViewModel.USDATEFORMAT);
+
+        swtchShowExpiredNotes.setChecked(settingsViewModel.SHOWEXPIREDNOTES);
+
+
+        btnSettingsDone.setOnClickListener(v -> {
+
+            if (swtch24hourFormat.isChecked()) {
+                settingsViewModel.TWNTYFOURHOURFORMAT = true;
+                settingsViewModel.currentTimeFormatter = DateTimeFormatter.ofPattern(settingsViewModel.TIMEPATTERN_24HOURFORMAT);
+            } else {
+                settingsViewModel.TWNTYFOURHOURFORMAT = false;
+                settingsViewModel.currentTimeFormatter = DateTimeFormatter.ofPattern(settingsViewModel.TIMEPATTERN_12HOURFORMAT);
+            }
+
+            if (swtchUSDateFormat.isChecked()) {
+                settingsViewModel.USDATEFORMAT = true;
+                settingsViewModel.currentDateFormatter = DateTimeFormatter.ofPattern(settingsViewModel.DATEPATTERN_US);
+            } else {
+                settingsViewModel.USDATEFORMAT = false;
+                settingsViewModel.currentDateFormatter = DateTimeFormatter.ofPattern(settingsViewModel.DATEPATTERN_EUROPEAN);
+            }
+
+            settingsViewModel.SHOWEXPIREDNOTES = swtchShowExpiredNotes.isChecked();
+
+            settingsViewModel.saveSettings(getContext());
+            fragmentStateViewModel.showMain();
+
+        });
+
+
         return view;
     }
+
+    /*public void processLoadedSettings(Map<String, Boolean> settings) {
+
+        for (Map.Entry<String, Boolean> setting : settings.entrySet()) {
+
+            switch (setting.getKey()) {
+                case SettingsConstants.SETTING_24HOURFORMAT:
+                    swtch24hourFormat.setChecked(setting.getValue());
+                    break;
+                case SettingsConstants.SETTING_USDATEFORMAT:
+                    swtchUSDateFormat.setChecked(setting.getValue());
+                    break;
+                case SettingsConstants.SETTING_SHOWEXPIREDNOTE:
+                    switchShowExpiredNotes.setChecked(setting.getValue());
+                    break;
+            }
+
+        }
+    }*/
+
 }

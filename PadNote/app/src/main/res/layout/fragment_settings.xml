@@ -12,12 +12,14 @@
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_marginStart="50dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="80dp"
         android:layout_marginEnd="50dp"
+        android:layout_marginBottom="25dp"
         android:text="24-hour format"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/swtchUSDateFormat"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -27,12 +29,44 @@
         android:layout_height="60dp"
         android:layout_marginStart="50dp"
         android:layout_marginEnd="50dp"
-        android:layout_marginBottom="490dp"
+        android:layout_marginBottom="25dp"
         android:text="US date format"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@+id/swtchShowExpiredNotes"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/swtch24hourFormat" />
+
+    <com.google.android.material.switchmaterial.SwitchMaterial
+        android:id="@+id/swtchShowExpiredNotes"
+        android:layout_width="0dp"
+        android:layout_height="60dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginBottom="430dp"
+        android:text="show Expired Notes"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/swtch24hourFormat" />
+        app:layout_constraintTop_toBottomOf="@+id/swtchUSDateFormat" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnSettingsDone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="310dp"
+        android:layout_marginTop="275dp"
+        android:layout_marginEnd="45dp"
+        android:layout_marginBottom="63dp"
+        android:clickable="true"
+        android:src="@drawable/done_48px"
+        app:backgroundTint="@android:color/holo_red_light"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/swtchShowExpiredNotes" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

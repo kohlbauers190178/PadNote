@@ -7,31 +7,53 @@
     android:layout_height="match_parent"
     tools:context=".fragment.MainFragment">
 
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rclrViewNotes"
-        android:layout_width="357dp"
-        android:layout_height="636dp"
-        android:layout_marginStart="27dp"
-        android:layout_marginTop="75dp"
-        android:layout_marginEnd="27dp"
-        android:layout_marginBottom="2dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnAddNote"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnAddNote"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         android:layout_marginStart="317dp"
         android:layout_marginEnd="38dp"
-        android:layout_marginBottom="41dp"
+        android:layout_marginBottom="11dp"
         android:backgroundTint="@android:color/holo_red_light"
         android:clickable="true"
         android:src="@android:drawable/ic_menu_add"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.954" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnShowSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="56dp"
+        android:layout_marginStart="38dp"
+        android:layout_marginEnd="317dp"
+        android:clickable="true"
+        android:src="@drawable/settings_48px"
+        app:backgroundTint="@color/colorSecondary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.16"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.939" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

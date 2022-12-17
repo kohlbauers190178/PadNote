@@ -20,6 +20,7 @@ import net.htlgkr.kohlbauers190178.padnote.model.Note;
 import net.htlgkr.kohlbauers190178.padnote.util.JsonManager;
 import net.htlgkr.kohlbauers190178.padnote.viewmodel.FragmentStateViewModel;
 import net.htlgkr.kohlbauers190178.padnote.viewmodel.NoteDataViewModel;
+import net.htlgkr.kohlbauers190178.padnote.viewmodel.SettingsViewModel;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -54,9 +55,10 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             return;
         }
 
-        TypeToken<Collection<Note>> token = new TypeToken<Collection<Note>>(){};
+        TypeToken<Collection<Note>> token = new TypeToken<Collection<Note>>() {
+        };
         Gson gson = new Gson();
-        notes = gson.fromJson(loaded,token.getType());
+        notes = gson.fromJson(loaded, token.getType());
             /*
             JSONObject jsonObject = new JSONObject(loaded);
             JSONArray jsonArray = jsonObject.getJSONArray("notes");
@@ -73,6 +75,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     NoteDataViewModel noteDataViewModel;
 
     FragmentStateViewModel viewModel;
+    SettingsViewModel settingsViewModel;
 
     /**
      * Use this factory method to create a new instance of
@@ -108,22 +111,26 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
-        //view.findViewById(R.id.txtViewMain).setOnClickListener(this);
         view.findViewById(R.id.btnAddNote).setOnClickListener(this);
+        view.findViewById(R.id.btnShowSettings).setOnClickListener(this);
         noteDataViewModel = new ViewModelProvider(requireActivity()).get(NoteDataViewModel.class);
         viewModel = new ViewModelProvider(requireActivity()).get(FragmentStateViewModel.class);
+        settingsViewModel = new ViewModelProvider(requireActivity()).get(SettingsViewModel.class);
+
+
+
+        settingsViewModel.loadSettings(getContext());
 
         recyclerView = view.findViewById(R.id.rclrViewNotes);
 
         loadNotes();
 
-        if(notes==null){
+        if (notes == null) {
             notes = new ArrayList<>();
         }
 
         noteDataViewModel.updateAllNotes(notes);
-        MyAdapter adapter = new MyAdapter(notes, noteDataViewModel, viewModel, getActivity().getSupportFragmentManager());
-
+        MyAdapter adapter = new MyAdapter(notes, noteDataViewModel, viewModel, settingsViewModel);
 
 
         recyclerView.setAdapter(adapter);
@@ -135,6 +142,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         if (view.getId() == R.id.btnAddNote) {
             viewModel.showNewNote();
+        }else if(view.getId()==R.id.btnShowSettings){
+            viewModel.showSettings();
         }
     }
 }

@@ -24,4 +24,6 @@ public class FragmentStateViewModel extends androidx.lifecycle.ViewModel {
     public void showEdit() {
         _state.postValue(SHOW_EDIT_POPUP);
     }
+
+    public void showSettings(){_state.postValue(SHOW_SETTINGS);}
 }

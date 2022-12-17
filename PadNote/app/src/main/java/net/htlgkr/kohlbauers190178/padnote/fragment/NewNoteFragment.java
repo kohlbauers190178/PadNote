@@ -37,6 +37,7 @@ import java.time.temporal.TemporalField;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -168,17 +169,11 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
                 MyTime myTime = myTimePicker.getMyTime();
 
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     LocalTime localTime = LocalTime.of(myTime.getHours(), myTime.getMinutes());
-                    long time = localTime.getLong(ChronoField.MILLI_OF_DAY);
-                    LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(myDatePicker.getDate()+time), ZoneId.systemDefault());
-                    noteToAdd.setDateAndTime(localDateTime.toInstant(ZoneOffset.of(ZoneId.systemDefault().getId())).toEpochMilli());
-                    //TODO: ist um eine Stunde vorne
-                    int i=0;
-                }else{
-                    throw new RuntimeException("sdk too old");
-                }
-
+                    LocalDateTime localDateTime = LocalDateTime.of(Instant.ofEpochMilli(myDatePicker.getDate()).atZone(ZoneId.systemDefault()).toLocalDate(), localTime);
+                    long dateAndTime = localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+                    //LocalDateTime test = Instant.ofEpochMilli(dateAndTime).atZone(ZoneId.systemDefault()).toLocalDateTime();
+                    noteToAdd.setDateAndTime(dateAndTime);
 
             }
 
@@ -218,7 +213,7 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
             }*/
             return true;
         } catch (Exception e) {
-            Toast.makeText(getActivity(), "ERROR", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "ERROR "+e.getMessage(), Toast.LENGTH_SHORT).show();
         }
         return false;
     }

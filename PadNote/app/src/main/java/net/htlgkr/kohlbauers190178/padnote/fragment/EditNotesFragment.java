@@ -22,8 +22,14 @@ import net.htlgkr.kohlbauers190178.padnote.util.MyTime;
 import net.htlgkr.kohlbauers190178.padnote.util.MyTimePicker;
 import net.htlgkr.kohlbauers190178.padnote.viewmodel.FragmentStateViewModel;
 import net.htlgkr.kohlbauers190178.padnote.viewmodel.NoteDataViewModel;
+import net.htlgkr.kohlbauers190178.padnote.viewmodel.SettingsViewModel;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -90,6 +96,7 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
 
     NoteDataViewModel noteDataViewModel;
     FragmentStateViewModel fragmentStateViewModel;
+    SettingsViewModel settingsViewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -108,6 +115,7 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
 
         noteDataViewModel = new ViewModelProvider(requireActivity()).get(NoteDataViewModel.class);
         fragmentStateViewModel = new ViewModelProvider(requireActivity()).get(FragmentStateViewModel.class);
+        settingsViewModel = new ViewModelProvider(requireActivity()).get(SettingsViewModel.class);
 
         view.findViewById(R.id.btnSaveEdit).setOnClickListener(this);
 
@@ -119,9 +127,12 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
         editTextText.setText(noteModel.getText());
 
 //        if (noteModel.getDateAndTime() != 0 && noteModel.getMyTime() != null) {
-        if (noteModel.getDateAndTime() != 0 ) {
+        if (noteModel.getDateAndTime() != 0) {
+            LocalDateTime localDateTime = Instant.ofEpochMilli(noteModel.getDateAndTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
+            txtViewDate.setText(localDateTime.toLocalDate().format(settingsViewModel.currentDateFormatter));
+            txtViewTime.setText(localDateTime.toLocalTime().format(settingsViewModel.currentTimeFormatter));
 
-            txtViewDate.setText(new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(noteModel.getDateAndTime()));
+            //txtViewDate.setText(new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(noteModel.getDateAndTime()));
 
             //String time = noteModel.getMyTime().getHours() + ":" + String.format(Locale.getDefault(), "%02d", noteModel.getMyTime().getMinutes());
             //txtViewTime.setText(time);
@@ -135,11 +146,13 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
     MyDatePicker myDatePicker;
     MyTimePicker myTimePicker;
 
+    private LocalDate date;
+    private LocalTime time;
 
     @Override
     public void onClick(View view) {
 
-        Note curentNote = noteDataViewModel.allNotes.getValue().get(noteDataViewModel.selectedNoteNr);
+        Note currentNote = noteDataViewModel.allNotes.getValue().get(noteDataViewModel.selectedNoteNr);
 
         if (view.getId() == R.id.btnSaveEdit) {
             ArrayList<Note> notes = noteDataViewModel.allNotes.getValue();
@@ -152,19 +165,39 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
                 notes = new ArrayList<>();
             }
 
-            Note note = noteDataViewModel.allNotes.getValue().get(noteDataViewModel.selectedNoteNr);
-
-            Note tempnote = new Note(title, description, text);
-
-           // if (note.getDateAndTime() != 0 && note.getMyTime() != null) {
-            if (note.getDateAndTime() != 0) {
+            Note newNoteWithoutDate = new Note(title, description, text);
 
 
-                tempnote.setDateAndTime(note.getDateAndTime());
-                //tempnote.setMyTime(note.getMyTime());
-                notes.set(noteDataViewModel.selectedNoteNr, tempnote);
+            // if (note.getDateAndTime() != 0 && note.getMyTime() != null) {
+            //if (note.getDateAndTime() != 0) {
+            if (date != null || time != null) {
+
+                //gets the currently saved date with time, because it gets manipulated
+                LocalDateTime currentNoteDateTime = Instant.ofEpochMilli(currentNote.getDateAndTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
+
+                if (date != null && time != null) {
+                    currentNoteDateTime = LocalDateTime.of(date, time);
+                }
+                if (date != null && time == null) {
+                    LocalTime currentTime = currentNoteDateTime.toLocalTime();
+                    currentNoteDateTime = LocalDateTime.of(date, currentTime);
+                }
+
+                if (date == null && time != null) {
+                    LocalDate currentDate = currentNoteDateTime.toLocalDate();
+                    currentNoteDateTime = LocalDateTime.of(currentDate, time);
+                }
+
+
+                long dateWithTime = currentNoteDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+                newNoteWithoutDate.setDateAndTime(dateWithTime);
+                //newNoteWithoutDate.setMyTime(note.getMyTime());
+                notes.set(noteDataViewModel.selectedNoteNr, newNoteWithoutDate);
             } else {
-                notes.set(noteDataViewModel.selectedNoteNr, tempnote);
+                if (currentNote.getDateAndTime() != 0) {
+                    newNoteWithoutDate.setDateAndTime(currentNote.getDateAndTime());
+                }
+                notes.set(noteDataViewModel.selectedNoteNr, newNoteWithoutDate);
             }
 
 
@@ -175,23 +208,29 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
             noteDataViewModel.updateAllNotes(notes);
             fragmentStateViewModel.showMain();
         } else if (view.getId() == R.id.txtViewInEditNoteDate) {
+
+            //TODO: hier ist alles fucked
             myDatePicker = new MyDatePicker();
             myDatePicker.setDatePickerListener(selection -> {
-                curentNote.setDateAndTime(selection);
-                txtViewDate.setText(new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(selection));
+                //currentNote.setDateAndTime(selection);
+                LocalDate localDate = Instant.ofEpochMilli(selection).atZone(ZoneId.systemDefault()).toLocalDate();
+                date = localDate;
+                txtViewDate.setText(localDate.format(settingsViewModel.currentDateFormatter));
             });
             myDatePicker.showDatePicker(requireActivity().getSupportFragmentManager());
         } else if (view.getId() == R.id.txtViewInEditNoteTime) {
-            //if (curentNote.getDateAndTime() != 0 && curentNote.getMyTime() != null) {
-            if (curentNote.getDateAndTime() != 0 ) {
-                //myTimePicker = new MyTimePicker(curentNote.getMyTime().getHours(), curentNote.getMyTime().getMinutes());
+            //if (currentNote.getDateAndTime() != 0 && currentNote.getMyTime() != null) {
+            if (currentNote.getDateAndTime() != 0) {
+                LocalDateTime localDateTime = Instant.ofEpochMilli(currentNote.getDateAndTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
+                myTimePicker = new MyTimePicker(localDateTime.getHour(), localDateTime.getMinute());
             } else {
                 myTimePicker = new MyTimePicker();
             }
             myTimePicker.setTimePickerListener(v -> {
-               // curentNote.setMyTime(new MyTime(myTimePicker.getTimePicker().getHour(), myTimePicker.getTimePicker().getMinute()));
-
-                String time = myTimePicker.getTimePicker().getHour() + ":" + String.format(Locale.getDefault(), "%02d", myTimePicker.getTimePicker().getMinute());
+                // currentNote.setMyTime(new MyTime(myTimePicker.getTimePicker().getHour(), myTimePicker.getTimePicker().getMinute()));
+                LocalTime localTime = LocalTime.of(myTimePicker.getTimePicker().getHour(), myTimePicker.getTimePicker().getMinute());
+                time = localTime;
+                String time = localTime.format(settingsViewModel.currentTimeFormatter);
                 txtViewTime.setText(time);
             });
             myTimePicker.showMyTimePicker(requireActivity().getSupportFragmentManager());

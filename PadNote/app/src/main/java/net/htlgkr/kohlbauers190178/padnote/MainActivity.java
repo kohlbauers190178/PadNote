@@ -6,12 +6,14 @@ import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
 import android.view.WindowManager;
+import android.widget.Toolbar;
 
 import net.htlgkr.kohlbauers190178.padnote.fragment.EditNotesFragment;
 import net.htlgkr.kohlbauers190178.padnote.fragment.MainFragment;
 import net.htlgkr.kohlbauers190178.padnote.fragment.NewNoteFragment;
 import net.htlgkr.kohlbauers190178.padnote.fragment.SettingsFragment;
 import net.htlgkr.kohlbauers190178.padnote.viewmodel.FragmentStateViewModel;
+import net.htlgkr.kohlbauers190178.padnote.viewmodel.SettingsViewModel;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
@@ -45,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
             }
             fragTransaction.commit();
         });
-
+        
 
         getSupportFragmentManager().beginTransaction().replace(R.id.cnstrntMain, new MainFragment()).commit();
 

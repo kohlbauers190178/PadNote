@@ -1,5 +1,6 @@
 package net.htlgkr.kohlbauers190178.padnote;
 
+import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,8 +16,14 @@ import net.htlgkr.kohlbauers190178.padnote.model.Note;
 import net.htlgkr.kohlbauers190178.padnote.util.MyTime;
 import net.htlgkr.kohlbauers190178.padnote.viewmodel.FragmentStateViewModel;
 import net.htlgkr.kohlbauers190178.padnote.viewmodel.NoteDataViewModel;
+import net.htlgkr.kohlbauers190178.padnote.viewmodel.SettingsViewModel;
 
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Locale;
 
@@ -26,12 +33,14 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> impl
     List<Note> notes;
     NoteDataViewModel noteDataViewModel;
     FragmentStateViewModel viewModel;
+    SettingsViewModel settingsViewModel;
 
 
-    public MyAdapter(List<Note> notes, NoteDataViewModel noteDataViewModel, FragmentStateViewModel viewModel, FragmentManager fragmentManager) {
+    public MyAdapter(List<Note> notes, NoteDataViewModel noteDataViewModel, FragmentStateViewModel viewModel, SettingsViewModel settingsViewModel) {
         this.notes = notes;
         this.noteDataViewModel = noteDataViewModel;
         this.viewModel = viewModel;
+        this.settingsViewModel = settingsViewModel;
     }
 
 
@@ -53,18 +62,23 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> impl
         holder.txtViewDescription.setText(notes.get(position).getDescription());
         holder.txtViewText.setText(notes.get(position).getText());
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
 
         long date = notes.get(position).getDateAndTime();
         //MyTime myTime = notes.get(position).getMyTime();
-        MyTime myTime = new MyTime(1,2);
-        //TODO: placeholder removen
 
-        if (date != 0 && myTime != null) {
-            holder.txtViewDate.setText(dateFormat.format(date));
+        LocalDateTime localDateTime = Instant.ofEpochMilli(date).atZone(ZoneId.systemDefault()).toLocalDateTime();
 
-            String time = myTime.getHours() + ":" + String.format(Locale.getDefault(), "%02d", myTime.getMinutes());
-            holder.txtViewTime.setText(time);
+        if (localDateTime != null) {
+
+            if (localDateTimeIsValid(localDateTime)) {
+                DateTimeFormatter dateFormatter = settingsViewModel.currentDateFormatter;
+                DateTimeFormatter timeFormatter = settingsViewModel.currentTimeFormatter;
+
+                holder.txtViewDate.setText(localDateTime.toLocalDate().format(dateFormatter));
+                holder.txtViewTime.setText(localDateTime.toLocalTime().format(timeFormatter));
+            }else{
+
+            }
         }
 
         for (int i = 0; i < holder.parentLayout.getChildCount(); i++) {
@@ -74,6 +88,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> impl
 
         }
 
+
+    }
+
+    private boolean localDateTimeIsValid(LocalDateTime localDateTime) {
+        return localDateTime.toLocalDate().getMonthValue() != 0 && localDateTime.toLocalDate().getDayOfMonth() != 0 && localDateTime.toLocalTime().getHour() != 0 && localDateTime.toLocalTime().getMinute() != 0;
     }
 
     @Override
