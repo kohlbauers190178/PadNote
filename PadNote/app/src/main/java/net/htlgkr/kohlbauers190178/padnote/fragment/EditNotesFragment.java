@@ -118,11 +118,13 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
         editTextDescription.setText(noteModel.getDescription());
         editTextText.setText(noteModel.getText());
 
-        if (noteModel.getDate() != 0 && noteModel.getMyTime() != null) {
-            txtViewDate.setText(new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(noteModel.getDate()));
+//        if (noteModel.getDateAndTime() != 0 && noteModel.getMyTime() != null) {
+        if (noteModel.getDateAndTime() != 0 ) {
 
-            String time = noteModel.getMyTime().getHours() + ":" + String.format(Locale.getDefault(), "%02d", noteModel.getMyTime().getMinutes());
-            txtViewTime.setText(time);
+            txtViewDate.setText(new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(noteModel.getDateAndTime()));
+
+            //String time = noteModel.getMyTime().getHours() + ":" + String.format(Locale.getDefault(), "%02d", noteModel.getMyTime().getMinutes());
+            //txtViewTime.setText(time);
         }
 
 
@@ -154,11 +156,12 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
 
             Note tempnote = new Note(title, description, text);
 
-            if (note.getDate() != 0 && note.getMyTime() != null) {
+           // if (note.getDateAndTime() != 0 && note.getMyTime() != null) {
+            if (note.getDateAndTime() != 0) {
 
 
-                tempnote.setDate(note.getDate());
-                tempnote.setMyTime(note.getMyTime());
+                tempnote.setDateAndTime(note.getDateAndTime());
+                //tempnote.setMyTime(note.getMyTime());
                 notes.set(noteDataViewModel.selectedNoteNr, tempnote);
             } else {
                 notes.set(noteDataViewModel.selectedNoteNr, tempnote);
@@ -174,18 +177,19 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
         } else if (view.getId() == R.id.txtViewInEditNoteDate) {
             myDatePicker = new MyDatePicker();
             myDatePicker.setDatePickerListener(selection -> {
-                curentNote.setDate(selection);
+                curentNote.setDateAndTime(selection);
                 txtViewDate.setText(new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(selection));
             });
             myDatePicker.showDatePicker(requireActivity().getSupportFragmentManager());
         } else if (view.getId() == R.id.txtViewInEditNoteTime) {
-            if (curentNote.getDate() != 0 && curentNote.getMyTime() != null) {
-                myTimePicker = new MyTimePicker(curentNote.getMyTime().getHours(), curentNote.getMyTime().getMinutes());
+            //if (curentNote.getDateAndTime() != 0 && curentNote.getMyTime() != null) {
+            if (curentNote.getDateAndTime() != 0 ) {
+                //myTimePicker = new MyTimePicker(curentNote.getMyTime().getHours(), curentNote.getMyTime().getMinutes());
             } else {
                 myTimePicker = new MyTimePicker();
             }
             myTimePicker.setTimePickerListener(v -> {
-                curentNote.setMyTime(new MyTime(myTimePicker.getTimePicker().getHour(), myTimePicker.getTimePicker().getMinute()));
+               // curentNote.setMyTime(new MyTime(myTimePicker.getTimePicker().getHour(), myTimePicker.getTimePicker().getMinute()));
 
                 String time = myTimePicker.getTimePicker().getHour() + ":" + String.format(Locale.getDefault(), "%02d", myTimePicker.getTimePicker().getMinute());
                 txtViewTime.setText(time);

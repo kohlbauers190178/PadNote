@@ -55,8 +55,11 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> impl
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
 
-        long date = notes.get(position).getDate();
-        MyTime myTime = notes.get(position).getMyTime();
+        long date = notes.get(position).getDateAndTime();
+        //MyTime myTime = notes.get(position).getMyTime();
+        MyTime myTime = new MyTime(1,2);
+        //TODO: placeholder removen
+
         if (date != 0 && myTime != null) {
             holder.txtViewDate.setText(dateFormat.format(date));
 

@@ -6,8 +6,7 @@ public class Note {
     String title;
     String description;
     String text;
-    long date;
-    MyTime myTime;
+    long dateAndTime;
 
 
     public String getTitle() {
@@ -34,28 +33,21 @@ public class Note {
         this.text = text;
     }
 
-    public long getDate() {
-        return date;
+    public long getDateAndTime() {
+        return dateAndTime;
     }
 
-    public void setDate(long date) {
-        this.date = date;
+    public void setDateAndTime(long dateAndTime) {
+        this.dateAndTime = dateAndTime;
     }
 
-    public MyTime getMyTime() {
-        return myTime;
-    }
 
-    public void setMyTime(MyTime myTime) {
-        this.myTime = myTime;
-    }
 
 
     public Note(String title, String description, String text) {
         this.title = title;
         this.description = description;
         this.text = text;
-        this.date = 0L;
-        this.myTime = null;
+        this.dateAndTime = 0L;
     }
 }

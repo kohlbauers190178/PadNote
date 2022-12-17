@@ -1,7 +1,9 @@
 package net.htlgkr.kohlbauers190178.padnote.fragment;
 
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -17,11 +19,24 @@ import net.htlgkr.kohlbauers190178.padnote.R;
 import net.htlgkr.kohlbauers190178.padnote.model.Note;
 import net.htlgkr.kohlbauers190178.padnote.util.JsonManager;
 import net.htlgkr.kohlbauers190178.padnote.util.MyDatePicker;
+import net.htlgkr.kohlbauers190178.padnote.util.MyTime;
 import net.htlgkr.kohlbauers190178.padnote.util.MyTimePicker;
 import net.htlgkr.kohlbauers190178.padnote.viewmodel.FragmentStateViewModel;
 import net.htlgkr.kohlbauers190178.padnote.viewmodel.NoteDataViewModel;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAmount;
+import java.time.temporal.TemporalField;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -87,7 +102,7 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
         return view;
     }
 
-    @Override
+
     public void onClick(View view) {
 
         if (view.getId() == R.id.btnNewNoteSave) {
@@ -150,8 +165,21 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
             Note noteToAdd = new Note(title, description, "");
 
             if (myDatePicker.getDate() != 0 && myTimePicker.getMyTime() != null) {
-                noteToAdd.setDate(myDatePicker.getDate());
-                noteToAdd.setMyTime(myTimePicker.getMyTime());
+                MyTime myTime = myTimePicker.getMyTime();
+
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    LocalTime localTime = LocalTime.of(myTime.getHours(), myTime.getMinutes());
+                    long time = localTime.getLong(ChronoField.MILLI_OF_DAY);
+                    LocalDateTime localDateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(myDatePicker.getDate()+time), ZoneId.systemDefault());
+                    noteToAdd.setDateAndTime(localDateTime.toInstant(ZoneOffset.of(ZoneId.systemDefault().getId())).toEpochMilli());
+                    //TODO: ist um eine Stunde vorne
+                    int i=0;
+                }else{
+                    throw new RuntimeException("sdk too old");
+                }
+
+
             }
 
             allNotes.add(noteToAdd);
