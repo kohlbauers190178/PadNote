@@ -23,6 +23,7 @@ import net.htlgkr.kohlbauers190178.padnote.util.MyTime;
 import net.htlgkr.kohlbauers190178.padnote.util.MyTimePicker;
 import net.htlgkr.kohlbauers190178.padnote.viewmodel.FragmentStateViewModel;
 import net.htlgkr.kohlbauers190178.padnote.viewmodel.NoteDataViewModel;
+import net.htlgkr.kohlbauers190178.padnote.viewmodel.SettingsViewModel;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -87,6 +88,7 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
     }
 
     FragmentStateViewModel viewModel;
+    SettingsViewModel settingsViewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -99,6 +101,7 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
         view.findViewById(R.id.btnAddTime).setOnClickListener(this);
         viewModel = new ViewModelProvider(requireActivity()).get(FragmentStateViewModel.class);
         noteDataViewModel = new ViewModelProvider(requireActivity()).get(NoteDataViewModel.class);
+        settingsViewModel = new ViewModelProvider(requireActivity()).get(SettingsViewModel.class);
 
         return view;
     }
@@ -120,7 +123,7 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
     }
 
     MyDatePicker myDatePicker = new MyDatePicker();
-    MyTimePicker myTimePicker = new MyTimePicker();
+    MyTimePicker myTimePicker;
 
     private void showDatePicker() {
         myDatePicker.showDatePicker(requireActivity().getSupportFragmentManager());
@@ -128,6 +131,7 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
 
 
     private void showTimePicker() {
+        myTimePicker = new MyTimePicker(settingsViewModel.TWNTYFOURHOURFORMAT);
         myTimePicker.showMyTimePicker(requireActivity().getSupportFragmentManager());
     }
 
@@ -136,11 +140,12 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
     private boolean saveNote() {
         //saves the note
 
-        TextInputEditText txtInputTitle = getActivity().findViewById(R.id.txtInputTitle);
-        TextInputEditText txtInputDescription = getActivity().findViewById(R.id.txtInputDescription);
+        TextInputEditText txtInputTitle = requireActivity().findViewById(R.id.txtInputTitle);
+        TextInputEditText txtInputDescription = requireActivity().findViewById(R.id.txtInputDescription);
         String title;
         String description;
         try {
+
 
             title = txtInputTitle.getText().toString();
             description = txtInputDescription.getText().toString();

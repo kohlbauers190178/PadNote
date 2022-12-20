@@ -59,15 +59,6 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         };
         Gson gson = new Gson();
         notes = gson.fromJson(loaded, token.getType());
-            /*
-            JSONObject jsonObject = new JSONObject(loaded);
-            JSONArray jsonArray = jsonObject.getJSONArray("notes");
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject temp = jsonArray.getJSONObject(i);
-                Note noteModel = new Note(temp.getString(JSONConstants.TITLE), temp.getString(JSONConstants.DESCRIPTION), temp.getString(JSONConstants.TEXT));
-                notes.add(noteModel);
-            }*/
-
         noteDataViewModel.updateAllNotes(notes);
     }
 

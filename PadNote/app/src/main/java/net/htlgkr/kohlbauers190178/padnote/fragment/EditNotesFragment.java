@@ -222,10 +222,12 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
             //if (currentNote.getDateAndTime() != 0 && currentNote.getMyTime() != null) {
             if (currentNote.getDateAndTime() != 0) {
                 LocalDateTime localDateTime = Instant.ofEpochMilli(currentNote.getDateAndTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
-                myTimePicker = new MyTimePicker(localDateTime.getHour(), localDateTime.getMinute());
+                myTimePicker = new MyTimePicker(settingsViewModel.TWNTYFOURHOURFORMAT,localDateTime.getHour(), localDateTime.getMinute());
             } else {
-                myTimePicker = new MyTimePicker();
+                myTimePicker = new MyTimePicker(settingsViewModel.TWNTYFOURHOURFORMAT);
             }
+
+
             myTimePicker.setTimePickerListener(v -> {
                 // currentNote.setMyTime(new MyTime(myTimePicker.getTimePicker().getHour(), myTimePicker.getTimePicker().getMinute()));
                 LocalTime localTime = LocalTime.of(myTimePicker.getTimePicker().getHour(), myTimePicker.getTimePicker().getMinute());
