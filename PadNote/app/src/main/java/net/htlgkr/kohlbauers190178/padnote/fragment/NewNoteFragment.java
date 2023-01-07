@@ -23,6 +23,7 @@ import net.htlgkr.kohlbauers190178.padnote.util.MyTime;
 import net.htlgkr.kohlbauers190178.padnote.util.MyTimePicker;
 import net.htlgkr.kohlbauers190178.padnote.viewmodel.FragmentStateViewModel;
 import net.htlgkr.kohlbauers190178.padnote.viewmodel.NoteDataViewModel;
+import net.htlgkr.kohlbauers190178.padnote.viewmodel.SettingsViewModel;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -87,6 +88,7 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
     }
 
     FragmentStateViewModel viewModel;
+    SettingsViewModel settingsViewModel;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -99,6 +101,7 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
         view.findViewById(R.id.btnAddTime).setOnClickListener(this);
         viewModel = new ViewModelProvider(requireActivity()).get(FragmentStateViewModel.class);
         noteDataViewModel = new ViewModelProvider(requireActivity()).get(NoteDataViewModel.class);
+        settingsViewModel = new ViewModelProvider(requireActivity()).get(SettingsViewModel.class);
 
         return view;
     }
@@ -120,7 +123,7 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
     }
 
     MyDatePicker myDatePicker = new MyDatePicker();
-    MyTimePicker myTimePicker = new MyTimePicker();
+    MyTimePicker myTimePicker;
 
     private void showDatePicker() {
         myDatePicker.showDatePicker(requireActivity().getSupportFragmentManager());
@@ -128,6 +131,7 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
 
 
     private void showTimePicker() {
+        myTimePicker = new MyTimePicker(settingsViewModel.TWNTYFOURHOURFORMAT);
         myTimePicker.showMyTimePicker(requireActivity().getSupportFragmentManager());
     }
 
@@ -165,15 +169,20 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
 
             Note noteToAdd = new Note(title, description, "");
 
-            if (myDatePicker.getDate() != 0 && myTimePicker.getMyTime() != null) {
-                MyTime myTime = myTimePicker.getMyTime();
+            if (myDatePicker.getDate() != 0) {
 
-
+                MyTime myTime;
+                if (myTimePicker != null) {
+                    myTime = myTimePicker.getMyTime();
                     LocalTime localTime = LocalTime.of(myTime.getHours(), myTime.getMinutes());
                     LocalDateTime localDateTime = LocalDateTime.of(Instant.ofEpochMilli(myDatePicker.getDate()).atZone(ZoneId.systemDefault()).toLocalDate(), localTime);
                     long dateAndTime = localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-                    //LocalDateTime test = Instant.ofEpochMilli(dateAndTime).atZone(ZoneId.systemDefault()).toLocalDateTime();
                     noteToAdd.setDateAndTime(dateAndTime);
+                } else {
+                    noteToAdd.setDateAndTime(myDatePicker.getDate());
+                }
+
+                //LocalDateTime test = Instant.ofEpochMilli(dateAndTime).atZone(ZoneId.systemDefault()).toLocalDateTime();
 
             }
 
@@ -213,7 +222,7 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
             }*/
             return true;
         } catch (Exception e) {
-            Toast.makeText(getActivity(), "ERROR "+e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "ERROR " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
         return false;
     }

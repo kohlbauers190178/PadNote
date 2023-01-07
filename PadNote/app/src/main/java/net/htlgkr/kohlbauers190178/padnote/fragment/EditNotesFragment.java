@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -93,6 +94,8 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
     TextView txtViewDate;
     TextView txtViewTime;
 
+    CheckBox chckBxIsDone;
+
 
     NoteDataViewModel noteDataViewModel;
     FragmentStateViewModel fragmentStateViewModel;
@@ -109,6 +112,8 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
 
         txtViewDate = view.findViewById(R.id.txtViewInEditNoteDate);
         txtViewTime = view.findViewById(R.id.txtViewInEditNoteTime);
+
+        chckBxIsDone = view.findViewById(R.id.chckBxInEditNoteIsDone);
 
         txtViewDate.setOnClickListener(this);
         txtViewTime.setOnClickListener(this);
@@ -138,6 +143,7 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
             //txtViewTime.setText(time);
         }
 
+        chckBxIsDone.setChecked(noteModel.isDone());
 
         return view;
     }
@@ -165,7 +171,7 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
                 notes = new ArrayList<>();
             }
 
-            Note newNoteWithoutDate = new Note(title, description, text);
+            Note newNote = new Note(title, description, text);
 
 
             // if (note.getDateAndTime() != 0 && note.getMyTime() != null) {
@@ -190,16 +196,20 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
 
 
                 long dateWithTime = currentNoteDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-                newNoteWithoutDate.setDateAndTime(dateWithTime);
-                //newNoteWithoutDate.setMyTime(note.getMyTime());
-                notes.set(noteDataViewModel.selectedNoteNr, newNoteWithoutDate);
+                newNote.setDateAndTime(dateWithTime);
+
+
+                //newNote.setMyTime(note.getMyTime());
+                //notes.set(noteDataViewModel.selectedNoteNr, newNote);
             } else {
                 if (currentNote.getDateAndTime() != 0) {
-                    newNoteWithoutDate.setDateAndTime(currentNote.getDateAndTime());
+                    newNote.setDateAndTime(currentNote.getDateAndTime());
                 }
-                notes.set(noteDataViewModel.selectedNoteNr, newNoteWithoutDate);
+                //notes.set(noteDataViewModel.selectedNoteNr, newNote);
             }
 
+            newNote.setDone(chckBxIsDone.isChecked());
+            notes.set(noteDataViewModel.selectedNoteNr, newNote);
 
             Gson gson = new Gson();
 
@@ -209,7 +219,6 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
             fragmentStateViewModel.showMain();
         } else if (view.getId() == R.id.txtViewInEditNoteDate) {
 
-            //TODO: hier ist alles fucked
             myDatePicker = new MyDatePicker();
             myDatePicker.setDatePickerListener(selection -> {
                 //currentNote.setDateAndTime(selection);
@@ -222,9 +231,9 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
             //if (currentNote.getDateAndTime() != 0 && currentNote.getMyTime() != null) {
             if (currentNote.getDateAndTime() != 0) {
                 LocalDateTime localDateTime = Instant.ofEpochMilli(currentNote.getDateAndTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
-                myTimePicker = new MyTimePicker(localDateTime.getHour(), localDateTime.getMinute());
+                myTimePicker = new MyTimePicker(settingsViewModel.TWNTYFOURHOURFORMAT,localDateTime.getHour(), localDateTime.getMinute());
             } else {
-                myTimePicker = new MyTimePicker();
+                myTimePicker = new MyTimePicker(settingsViewModel.TWNTYFOURHOURFORMAT);
             }
             myTimePicker.setTimePickerListener(v -> {
                 // currentNote.setMyTime(new MyTime(myTimePicker.getTimePicker().getHour(), myTimePicker.getTimePicker().getMinute()));

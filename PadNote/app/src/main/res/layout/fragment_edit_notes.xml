@@ -142,5 +142,19 @@
         app:layout_constraintStart_toEndOf="@+id/txtViewInEditNoteDate"
         app:layout_constraintTop_toBottomOf="@+id/editTextText" />
 
+    <CheckBox
+        android:id="@+id/chckBxInEditNoteIsDone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="34dp"
+        android:layout_marginTop="36dp"
+        android:layout_marginEnd="299dp"
+        android:layout_marginBottom="133dp"
+        android:text="is Done"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtViewInEditNoteDate" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

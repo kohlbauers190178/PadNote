@@ -28,7 +28,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
+            android:layout_width="378dp"
             android:layout_height="match_parent"
             android:layout_marginStart="1dp"
             android:layout_marginLeft="1dp"
@@ -58,9 +58,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="10dp"
                 android:layout_marginEnd="16dp"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="8dp"
                 android:text="TextView"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toTopOf="@+id/txtViewText"
@@ -74,7 +74,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="5dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginBottom="10dp"
                 android:text="TextView"
@@ -86,28 +85,52 @@
 
             <TextView
                 android:id="@+id/txtViewDate"
-                android:layout_width="match_parent"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="1dp"
+                android:layout_marginTop="5dp"
                 app:layout_constraintBottom_toTopOf="@+id/txtViewTime"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txtViewText" />
 
             <TextView
                 android:id="@+id/txtViewTime"
-                android:layout_width="match_parent"
+                android:layout_width="150dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="1dp"
-                android:layout_marginEnd="16dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="74dp"
+                app:layout_constraintBottom_toTopOf="@+id/chckBxNoteDone"
+                app:layout_constraintEnd_toStartOf="@+id/imgViewNoteExpired"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/txtViewDate" />
+
+            <CheckBox
+                android:id="@+id/chckBxNoteDone"
+                android:layout_width="wrap_content"
+                android:layout_height="20dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="146dp"
+                android:clickable="false"
+                android:text="is Done"
+                app:layout_constraintBottom_toTopOf="@id/txtViewTime"
+                app:layout_constraintEnd_toStartOf="@+id/imgViewNoteExpired"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/txtViewTime" />
+
+            <ImageView
+                android:id="@+id/imgViewNoteExpired"
+                android:layout_width="47dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="12dp"
+                android:layout_marginEnd="17dp"
+                android:layout_marginBottom="17dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/txtViewDate"
+                app:layout_constraintTop_toBottomOf="@+id/txtViewText"
+                app:layout_constraintVertical_bias="0.0"
+                app:srcCompat="@drawable/timelapse_48px" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 

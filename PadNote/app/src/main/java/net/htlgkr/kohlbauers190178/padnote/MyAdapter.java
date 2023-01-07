@@ -1,31 +1,27 @@
 package net.htlgkr.kohlbauers190178.padnote;
 
-import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import net.htlgkr.kohlbauers190178.padnote.model.Note;
-import net.htlgkr.kohlbauers190178.padnote.util.MyTime;
 import net.htlgkr.kohlbauers190178.padnote.viewmodel.FragmentStateViewModel;
 import net.htlgkr.kohlbauers190178.padnote.viewmodel.NoteDataViewModel;
 import net.htlgkr.kohlbauers190178.padnote.viewmodel.SettingsViewModel;
 
-import java.text.SimpleDateFormat;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Locale;
 
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> implements View.OnClickListener {
 
@@ -52,7 +48,6 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> impl
 
         view.findViewById(R.id.cardView).setOnClickListener(this);
 
-
         return new MyAdapter.MyViewHolder(view);
     }
 
@@ -76,9 +71,24 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> impl
 
                 holder.txtViewDate.setText(localDateTime.toLocalDate().format(dateFormatter));
                 holder.txtViewTime.setText(localDateTime.toLocalTime().format(timeFormatter));
-            }else{
-
             }
+        }
+
+        boolean noteDone = notes.get(position).isDone();
+
+        holder.chchBxIsDone.setChecked(noteDone);
+
+        if (notes.get(position).getDateAndTime() != 0) {
+
+            if (notes.get(position).getDateAndTime() >= System.currentTimeMillis()) {
+                //note isn't expired
+                holder.imgViewNoteExpired.setImageResource(R.drawable.timelapse_48px);
+            } else if (notes.get(position).getDateAndTime() < System.currentTimeMillis()) {
+                //note is expired
+                holder.imgViewNoteExpired.setImageResource(R.drawable.warning_48px);
+            }
+        }else{
+            holder.imgViewNoteExpired.setImageDrawable(null);
         }
 
         for (int i = 0; i < holder.parentLayout.getChildCount(); i++) {
@@ -92,7 +102,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> impl
     }
 
     private boolean localDateTimeIsValid(LocalDateTime localDateTime) {
-        return localDateTime.toLocalDate().getMonthValue() != 0 && localDateTime.toLocalDate().getDayOfMonth() != 0 && localDateTime.toLocalTime().getHour() != 0 && localDateTime.toLocalTime().getMinute() != 0;
+        return localDateTime.toLocalDate().getMonthValue() != 0 && localDateTime.toLocalDate().getDayOfMonth() != 0;
     }
 
     @Override
@@ -138,6 +148,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> impl
         TextView txtViewDate;
         TextView txtViewTime;
 
+        CheckBox chchBxIsDone;
+
+        ImageView imgViewNoteExpired;
+
         ConstraintLayout parentLayout;
 
         View.OnClickListener listener;
@@ -151,6 +165,10 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> impl
 
             txtViewDate = itemView.findViewById(R.id.txtViewDate);
             txtViewTime = itemView.findViewById(R.id.txtViewTime);
+
+            chchBxIsDone = itemView.findViewById(R.id.chckBxNoteDone);
+
+            imgViewNoteExpired = itemView.findViewById(R.id.imgViewNoteExpired);
 
             parentLayout = itemView.findViewById(R.id.parentLayout);
 
