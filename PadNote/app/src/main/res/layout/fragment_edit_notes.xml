@@ -156,5 +156,25 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtViewInEditNoteDate" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/btnDeleteNote"
+        android:layout_width="40dp"
+        android:layout_height="52dp"
+        android:layout_marginStart="54dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="200dp"
+        android:layout_marginBottom="62dp"
+        android:clickable="true"
+        android:src="@android:drawable/ic_menu_delete"
+        app:backgroundTint="@color/colorSecondary"
+        app:fabSize="mini"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btnSaveEdit"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chckBxInEditNoteIsDone"
+        app:layout_constraintVertical_bias="1.0"
+        app:useCompatPadding="false" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

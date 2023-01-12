@@ -1,7 +1,10 @@
 package net.htlgkr.kohlbauers190178.padnote.fragment;
 
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -123,7 +126,7 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
         settingsViewModel = new ViewModelProvider(requireActivity()).get(SettingsViewModel.class);
 
         view.findViewById(R.id.btnSaveEdit).setOnClickListener(this);
-
+        view.findViewById(R.id.btnDeleteNote).setOnClickListener(this);
         //Note noteModel = noteDataViewModel.selectedNote.getValue();
 
         Note noteModel = noteDataViewModel.allNotes.getValue().get(noteDataViewModel.selectedNoteNr);
@@ -231,7 +234,7 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
             //if (currentNote.getDateAndTime() != 0 && currentNote.getMyTime() != null) {
             if (currentNote.getDateAndTime() != 0) {
                 LocalDateTime localDateTime = Instant.ofEpochMilli(currentNote.getDateAndTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
-                myTimePicker = new MyTimePicker(settingsViewModel.TWNTYFOURHOURFORMAT,localDateTime.getHour(), localDateTime.getMinute());
+                myTimePicker = new MyTimePicker(settingsViewModel.TWNTYFOURHOURFORMAT, localDateTime.getHour(), localDateTime.getMinute());
             } else {
                 myTimePicker = new MyTimePicker(settingsViewModel.TWNTYFOURHOURFORMAT);
             }
@@ -243,6 +246,27 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
                 txtViewTime.setText(time);
             });
             myTimePicker.showMyTimePicker(requireActivity().getSupportFragmentManager());
+
+        } else if (view.getId() == R.id.btnDeleteNote) {
+
+            AlertDialog.Builder alert = new AlertDialog.Builder(requireActivity());
+            alert.setTitle("Warning!");
+            alert.setMessage("Are you sure you want to delete this note?");
+            alert.setPositiveButton("Yes", (dialogInterface, i) -> {
+                ArrayList<Note> notes = noteDataViewModel.allNotes.getValue();
+                notes.remove(noteDataViewModel.selectedNoteNr);
+                Gson gson = new Gson();
+                JsonManager.writeToJson(getContext(), gson.toJson(notes));
+                noteDataViewModel.updateAllNotes(notes);
+                     dialogInterface.dismiss();
+                     fragmentStateViewModel.showMain();
+            });
+
+            alert.setNegativeButton("No", (dialogInterface,i)->{
+               dialogInterface.dismiss();
+            });
+
+            alert.show();
         }
 
     }
