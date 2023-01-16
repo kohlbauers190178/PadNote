@@ -170,15 +170,20 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
 
             Note noteToAdd = new Note(title, description, "");
 
-            if (myDatePicker.getDate() != 0 && myTimePicker.getMyTime() != null) {
-                MyTime myTime = myTimePicker.getMyTime();
+            if (myDatePicker.getDate() != 0) {
 
-
+                MyTime myTime;
+                if (myTimePicker != null) {
+                    myTime = myTimePicker.getMyTime();
                     LocalTime localTime = LocalTime.of(myTime.getHours(), myTime.getMinutes());
                     LocalDateTime localDateTime = LocalDateTime.of(Instant.ofEpochMilli(myDatePicker.getDate()).atZone(ZoneId.systemDefault()).toLocalDate(), localTime);
                     long dateAndTime = localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-                    //LocalDateTime test = Instant.ofEpochMilli(dateAndTime).atZone(ZoneId.systemDefault()).toLocalDateTime();
                     noteToAdd.setDateAndTime(dateAndTime);
+                } else {
+                    noteToAdd.setDateAndTime(myDatePicker.getDate());
+                }
+
+                //LocalDateTime test = Instant.ofEpochMilli(dateAndTime).atZone(ZoneId.systemDefault()).toLocalDateTime();
 
             }
 
@@ -218,7 +223,7 @@ public class NewNoteFragment extends Fragment implements View.OnClickListener {
             }*/
             return true;
         } catch (Exception e) {
-            Toast.makeText(getActivity(), "ERROR "+e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "ERROR " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
         return false;
     }

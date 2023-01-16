@@ -30,6 +30,11 @@ public class MyTimePicker {
                 .setMinute(0)
                 .setTitleText("Select Time")
                 .build();
+<<<<<<< HEAD
+=======
+        timePicker.addOnPositiveButtonClickListener(s -> setMyTime(new MyTime(timePicker.getHour(), timePicker.getMinute())));
+
+>>>>>>> 84c78b3e5c8214b1f7cf7ddd28aba9dece9fec9c
     }
 
     public MaterialTimePicker getTimePicker() {

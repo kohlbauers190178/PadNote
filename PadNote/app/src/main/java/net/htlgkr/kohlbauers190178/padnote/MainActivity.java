@@ -30,6 +30,9 @@ public class MainActivity extends AppCompatActivity {
         viewModel.state.observe(this, state -> {
             FragmentTransaction fragTransaction = getSupportFragmentManager().beginTransaction();
             switch (state) {
+                case FragmentStateViewModel.MAINSTATE:
+                    fragTransaction.replace(R.id.cnstrntMain, MainFragment.newInstance("",""), "MainFragment");
+                    break;
                 case FragmentStateViewModel.SHOW_NEW_NOTE:
                     fragTransaction.addToBackStack("").replace(R.id.cnstrntMain, NewNoteFragment.newInstance("", ""), "New Note");
                     fragTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);

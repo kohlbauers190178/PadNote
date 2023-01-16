@@ -7,6 +7,16 @@ public class Note {
     String description;
     String text;
     long dateAndTime;
+    boolean isDone;
+
+
+    public void setDone(boolean done) {
+        isDone = done;
+    }
+
+    public boolean isDone() {
+        return isDone;
+    }
 
 
     public String getTitle() {
@@ -42,12 +52,11 @@ public class Note {
     }
 
 
-
-
     public Note(String title, String description, String text) {
         this.title = title;
         this.description = description;
         this.text = text;
         this.dateAndTime = 0L;
+        isDone = false;
     }
 }

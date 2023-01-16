@@ -24,6 +24,7 @@ import net.htlgkr.kohlbauers190178.padnote.viewmodel.SettingsViewModel;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -59,13 +60,17 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         };
         Gson gson = new Gson();
         notes = gson.fromJson(loaded, token.getType());
+<<<<<<< HEAD
+=======
+
+>>>>>>> 84c78b3e5c8214b1f7cf7ddd28aba9dece9fec9c
         noteDataViewModel.updateAllNotes(notes);
     }
 
     RecyclerView recyclerView;
     NoteDataViewModel noteDataViewModel;
 
-    FragmentStateViewModel viewModel;
+    FragmentStateViewModel fragmentStateViewModel;
     SettingsViewModel settingsViewModel;
 
     /**
@@ -105,9 +110,8 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         view.findViewById(R.id.btnAddNote).setOnClickListener(this);
         view.findViewById(R.id.btnShowSettings).setOnClickListener(this);
         noteDataViewModel = new ViewModelProvider(requireActivity()).get(NoteDataViewModel.class);
-        viewModel = new ViewModelProvider(requireActivity()).get(FragmentStateViewModel.class);
+        fragmentStateViewModel = new ViewModelProvider(requireActivity()).get(FragmentStateViewModel.class);
         settingsViewModel = new ViewModelProvider(requireActivity()).get(SettingsViewModel.class);
-
 
 
         settingsViewModel.loadSettings(getContext());
@@ -121,8 +125,12 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         }
 
         noteDataViewModel.updateAllNotes(notes);
-        MyAdapter adapter = new MyAdapter(notes, noteDataViewModel, viewModel, settingsViewModel);
-
+        MyAdapter adapter = null;
+        if (settingsViewModel.SHOWEXPIREDNOTES) {
+            adapter = new MyAdapter(notes, noteDataViewModel, fragmentStateViewModel, settingsViewModel);
+        } else {
+            adapter = new MyAdapter(notes.stream().filter(note -> note.getDateAndTime() >= System.currentTimeMillis()).collect(Collectors.toList()), noteDataViewModel, fragmentStateViewModel, settingsViewModel);
+        }
 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -132,9 +140,9 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.btnAddNote) {
-            viewModel.showNewNote();
-        }else if(view.getId()==R.id.btnShowSettings){
-            viewModel.showSettings();
+            fragmentStateViewModel.showNewNote();
+        } else if (view.getId() == R.id.btnShowSettings) {
+            fragmentStateViewModel.showSettings();
         }
     }
 }

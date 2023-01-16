@@ -1,7 +1,10 @@
 package net.htlgkr.kohlbauers190178.padnote.fragment;
 
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -9,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -93,6 +97,8 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
     TextView txtViewDate;
     TextView txtViewTime;
 
+    CheckBox chckBxIsDone;
+
 
     NoteDataViewModel noteDataViewModel;
     FragmentStateViewModel fragmentStateViewModel;
@@ -110,6 +116,8 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
         txtViewDate = view.findViewById(R.id.txtViewInEditNoteDate);
         txtViewTime = view.findViewById(R.id.txtViewInEditNoteTime);
 
+        chckBxIsDone = view.findViewById(R.id.chckBxInEditNoteIsDone);
+
         txtViewDate.setOnClickListener(this);
         txtViewTime.setOnClickListener(this);
 
@@ -118,7 +126,7 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
         settingsViewModel = new ViewModelProvider(requireActivity()).get(SettingsViewModel.class);
 
         view.findViewById(R.id.btnSaveEdit).setOnClickListener(this);
-
+        view.findViewById(R.id.btnDeleteNote).setOnClickListener(this);
         //Note noteModel = noteDataViewModel.selectedNote.getValue();
 
         Note noteModel = noteDataViewModel.allNotes.getValue().get(noteDataViewModel.selectedNoteNr);
@@ -138,6 +146,7 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
             //txtViewTime.setText(time);
         }
 
+        chckBxIsDone.setChecked(noteModel.isDone());
 
         return view;
     }
@@ -165,7 +174,7 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
                 notes = new ArrayList<>();
             }
 
-            Note newNoteWithoutDate = new Note(title, description, text);
+            Note newNote = new Note(title, description, text);
 
 
             // if (note.getDateAndTime() != 0 && note.getMyTime() != null) {
@@ -190,16 +199,20 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
 
 
                 long dateWithTime = currentNoteDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-                newNoteWithoutDate.setDateAndTime(dateWithTime);
-                //newNoteWithoutDate.setMyTime(note.getMyTime());
-                notes.set(noteDataViewModel.selectedNoteNr, newNoteWithoutDate);
+                newNote.setDateAndTime(dateWithTime);
+
+
+                //newNote.setMyTime(note.getMyTime());
+                //notes.set(noteDataViewModel.selectedNoteNr, newNote);
             } else {
                 if (currentNote.getDateAndTime() != 0) {
-                    newNoteWithoutDate.setDateAndTime(currentNote.getDateAndTime());
+                    newNote.setDateAndTime(currentNote.getDateAndTime());
                 }
-                notes.set(noteDataViewModel.selectedNoteNr, newNoteWithoutDate);
+                //notes.set(noteDataViewModel.selectedNoteNr, newNote);
             }
 
+            newNote.setDone(chckBxIsDone.isChecked());
+            notes.set(noteDataViewModel.selectedNoteNr, newNote);
 
             Gson gson = new Gson();
 
@@ -209,7 +222,6 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
             fragmentStateViewModel.showMain();
         } else if (view.getId() == R.id.txtViewInEditNoteDate) {
 
-            //TODO: hier ist alles fucked
             myDatePicker = new MyDatePicker();
             myDatePicker.setDatePickerListener(selection -> {
                 //currentNote.setDateAndTime(selection);
@@ -222,7 +234,11 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
             //if (currentNote.getDateAndTime() != 0 && currentNote.getMyTime() != null) {
             if (currentNote.getDateAndTime() != 0) {
                 LocalDateTime localDateTime = Instant.ofEpochMilli(currentNote.getDateAndTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
+<<<<<<< HEAD
                 myTimePicker = new MyTimePicker(settingsViewModel.TWNTYFOURHOURFORMAT,localDateTime.getHour(), localDateTime.getMinute());
+=======
+                myTimePicker = new MyTimePicker(settingsViewModel.TWNTYFOURHOURFORMAT, localDateTime.getHour(), localDateTime.getMinute());
+>>>>>>> 84c78b3e5c8214b1f7cf7ddd28aba9dece9fec9c
             } else {
                 myTimePicker = new MyTimePicker(settingsViewModel.TWNTYFOURHOURFORMAT);
             }
@@ -236,6 +252,27 @@ public class EditNotesFragment extends DialogFragment implements View.OnClickLis
                 txtViewTime.setText(time);
             });
             myTimePicker.showMyTimePicker(requireActivity().getSupportFragmentManager());
+
+        } else if (view.getId() == R.id.btnDeleteNote) {
+
+            AlertDialog.Builder alert = new AlertDialog.Builder(requireActivity());
+            alert.setTitle("Warning!");
+            alert.setMessage("Are you sure you want to delete this note?");
+            alert.setPositiveButton("Yes", (dialogInterface, i) -> {
+                ArrayList<Note> notes = noteDataViewModel.allNotes.getValue();
+                notes.remove(noteDataViewModel.selectedNoteNr);
+                Gson gson = new Gson();
+                JsonManager.writeToJson(getContext(), gson.toJson(notes));
+                noteDataViewModel.updateAllNotes(notes);
+                     dialogInterface.dismiss();
+                     fragmentStateViewModel.showMain();
+            });
+
+            alert.setNegativeButton("No", (dialogInterface,i)->{
+               dialogInterface.dismiss();
+            });
+
+            alert.show();
         }
 
     }
