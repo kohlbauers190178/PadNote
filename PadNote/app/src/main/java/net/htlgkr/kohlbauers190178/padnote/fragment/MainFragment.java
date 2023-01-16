@@ -60,10 +60,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         };
         Gson gson = new Gson();
         notes = gson.fromJson(loaded, token.getType());
-<<<<<<< HEAD
-=======
 
->>>>>>> 84c78b3e5c8214b1f7cf7ddd28aba9dece9fec9c
         noteDataViewModel.updateAllNotes(notes);
     }
 
